@@ -1,0 +1,17 @@
+services:
+  frontend:
+    build: .
+    container_name: logistics-frontend
+    ports:
+      - "4200:4200"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    networks:
+      - logistics-net
+
+networks:
+  logistics-net:
+    driver: bridge
