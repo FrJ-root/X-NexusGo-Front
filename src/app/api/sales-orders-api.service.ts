@@ -74,12 +74,16 @@ export class SalesOrdersApiService {
     return this.http.post<SalesOrder>(`${this.baseUrl}/${id}/confirm`, {});
   }
 
-  reserve(id: number): Observable<ReservationResult> {
-    return this.http.post<ReservationResult>(`${this.baseUrl}/${id}/reserve`, {});
+  reserve(id: number, allowPartial: boolean = false): Observable<SalesOrder> {
+    let params = new HttpParams();
+    params = params.set('allowPartial', allowPartial);
+    return this.http.post<SalesOrder>(`${this.baseUrl}/${id}/reserve`, {}, { params });
   }
 
-  reserveStock(id: number): Observable<ReservationResult> {
-    return this.http.post<ReservationResult>(`${this.baseUrl}/${id}/reserve-stock`, {});
+  reserveStock(id: number, allowPartial: boolean = false): Observable<SalesOrder> {
+    let params = new HttpParams();
+    params = params.set('allowPartial', allowPartial);
+    return this.http.post<SalesOrder>(`${this.baseUrl}/${id}/reserve-stock`, {}, { params });
   }
 
   cancel(id: number): Observable<SalesOrder> {
@@ -90,7 +94,6 @@ export class SalesOrdersApiService {
     return this.http.get<SalesOrderLine[]>(`${this.baseUrl}/${orderId}/lines`);
   }
 
-  // Stats for dashboards
   countByStatus(status: OrderStatus): Observable<number> {
     return this.http.get<number>(`${this.baseUrl}/count/status/${status}`);
   }

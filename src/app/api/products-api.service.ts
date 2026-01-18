@@ -4,6 +4,14 @@ import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Product, Page, PageRequest } from '../shared/models';
 
+export interface ProductSearchResult {
+  sku: string;
+  name: string;
+  category: string;
+  active: boolean;
+  availability: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -32,8 +40,8 @@ export class ProductsApiService {
     return this.http.get<Product>(`${this.baseUrl}/${id}`);
   }
 
-  getBySku(sku: string): Observable<Product> {
-    return this.http.get<Product>(`${this.baseUrl}/sku/${sku}`);
+  getBySku(sku: string): Observable<ProductSearchResult> {
+    return this.http.get<ProductSearchResult>(`${this.baseUrl}/sku/${sku}`);
   }
 
   search(filters: {

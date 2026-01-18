@@ -5,7 +5,7 @@ import { DataTableComponent, TableColumn, TableAction } from '../../../shared/co
 import { SearchFiltersComponent, FilterField } from '../../../shared/components/search-filters/search-filters.component';
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { ToastService } from '../../../shared/services/toast.service';
-import { SalesOrder, OrderStatus, ReservationResult } from '../../../shared/models';
+import { SalesOrder, OrderStatus } from '../../../shared/models';
 
 @Component({
   selector: 'app-admin-orders',
@@ -340,14 +340,14 @@ export class AdminOrdersComponent implements OnInit {
     if (!order?.id) return;
     this.processing.set(true);
 
-    this.ordersApi.reserveStock(order.id).subscribe({
-      next: (result: ReservationResult) => {
-        if (result.fullyReserved) {
+    this.ordersApi.reserveStock(order.id, true).subscribe({
+      next: (updatedOrder: SalesOrder) => {
+        if (updatedOrder.status === 'RESERVED') {
           this.toast.success('Stock entièrement réservé');
-        } else {
+        } else if (updatedOrder.status === 'PARTIALLY_RESERVED') {
           this.toast.warning('Réservation partielle - Vérifiez les backorders');
         }
-        this.ordersApi.getById(order.id!).subscribe((updated: SalesOrder) => this.selectedOrder.set(updated));
+        this.selectedOrder.set(updatedOrder);
         this.loadOrders();
         this.processing.set(false);
       },

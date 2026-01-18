@@ -99,6 +99,23 @@ export class ShipmentsApiService {
     return this.http.get<Shipment>(`${this.baseUrl}/tracking/${trackingNumber}`);
   }
 
+  getShipmentForOrder(orderId: number): Observable<Shipment> {
+    return this.http.get<Shipment>(`${this.baseUrl}/order/${orderId}`);
+  }
+
+  createShipmentForOrder(orderId: number, carrierId: number): Observable<Shipment> {
+    let params = new HttpParams();
+    params = params.set('orderId', orderId);
+    params = params.set('carrierId', carrierId);
+    return this.http.post<Shipment>(`${this.baseUrl}/create`, {}, { params });
+  }
+
+  updateShipmentStatus(id: number, status: ShipmentStatus): Observable<Shipment> {
+    let params = new HttpParams();
+    params = params.set('status', status);
+    return this.http.post<Shipment>(`${this.baseUrl}/${id}/update-status`, {}, { params });
+  }
+
   // Carrier endpoints
   getAllCarriers(): Observable<Carrier[]> {
     return this.http.get<Carrier[]>(this.carrierUrl);

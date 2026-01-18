@@ -1,10 +1,12 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { ProductsApiService } from '../../../api/products-api.service';
+import { ProductsApiService, ProductSearchResult } from '../../../api/products-api.service';
 import { InventoryApiService } from '../../../api/inventory-api.service';
 import { DataTableComponent, TableColumn } from '../../../shared/components/data-table/data-table.component';
 import { SearchFiltersComponent, FilterField } from '../../../shared/components/search-filters/search-filters.component';
+import { ToastService } from '../../../shared/services/toast.service';
 import { Product, Inventory, Page } from '../../../shared/models';
 
 interface ProductWithStock extends Product {
@@ -17,6 +19,7 @@ interface ProductWithStock extends Product {
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     RouterLink,
     DataTableComponent,
     SearchFiltersComponent
@@ -31,6 +34,66 @@ interface ProductWithStock extends Product {
         <a routerLink="/client/orders/create" class="btn btn-primary">
           🛒 Passer commande
         </a>
+      </div>
+
+      <!-- SKU Search Box -->
+      <div class="sku-search-card">
+        <h3>🔍 Recherche rapide par SKU</h3>
+        <p class="search-desc">Entrez le code SKU pour vérifier la disponibilité d'un produit</p>
+        <div class="sku-search-form">
+          <input 
+            type="text" 
+            [(ngModel)]="skuSearchTerm"
+            placeholder="Entrez le SKU (ex: PROD-001)"
+            class="sku-input"
+            (keyup.enter)="searchBySku()"
+          />
+          <button class="btn btn-primary" (click)="searchBySku()" [disabled]="!skuSearchTerm || skuSearching()">
+            @if (skuSearching()) {
+              <span class="spinner-sm"></span>
+            } @else {
+              Rechercher
+            }
+          </button>
+        </div>
+        
+        @if (skuSearchResult()) {
+          <div class="sku-result" [class.unavailable]="!skuSearchResult()!.active">
+            <div class="result-header">
+              <span class="result-sku">{{ skuSearchResult()!.sku }}</span>
+              <span class="availability-badge" [class]="skuSearchResult()!.active ? 'available' : 'unavailable'">
+                {{ skuSearchResult()!.availability }}
+              </span>
+            </div>
+            <div class="result-details">
+              <div class="detail-item">
+                <span class="label">Nom</span>
+                <span class="value">{{ skuSearchResult()!.name }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="label">Catégorie</span>
+                <span class="value">{{ skuSearchResult()!.category }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="label">Statut</span>
+                <span class="value">{{ skuSearchResult()!.active ? 'Actif' : 'Inactif' }}</span>
+              </div>
+            </div>
+            @if (!skuSearchResult()!.active) {
+              <div class="unavailable-notice">
+                <span class="notice-icon">⚠️</span>
+                <span>Ce produit est actuellement indisponible à la vente</span>
+              </div>
+            }
+          </div>
+        }
+        
+        @if (skuSearchError()) {
+          <div class="sku-error">
+            <span class="error-icon">❌</span>
+            <span>{{ skuSearchError() }}</span>
+          </div>
+        }
       </div>
 
       <app-search-filters
@@ -137,11 +200,40 @@ interface ProductWithStock extends Product {
 
     .pagination { display: flex; justify-content: center; align-items: center; gap: 1rem; margin-top: 2rem; }
     .page-info { color: #6b7280; font-size: 0.875rem; }
+
+    /* SKU Search Card */
+    .sku-search-card { background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; border: 1px solid #bae6fd; }
+    .sku-search-card h3 { margin: 0 0 0.5rem; font-size: 1rem; color: #0369a1; }
+    .search-desc { margin: 0 0 1rem; font-size: 0.875rem; color: #0284c7; }
+    .sku-search-form { display: flex; gap: 0.75rem; }
+    .sku-input { flex: 1; max-width: 300px; padding: 0.75rem 1rem; border: 2px solid #7dd3fc; border-radius: 8px; font-size: 1rem; background: white; transition: border-color 0.2s; }
+    .sku-input:focus { outline: none; border-color: #0284c7; }
+    .sku-input::placeholder { color: #94a3b8; }
+
+    .sku-result { margin-top: 1rem; background: white; border-radius: 8px; padding: 1rem; border: 1px solid #e2e8f0; }
+    .sku-result.unavailable { border-color: #fecaca; background: #fef2f2; }
+    .result-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid #f1f5f9; }
+    .result-sku { font-size: 1.125rem; font-weight: 700; color: #1e293b; font-family: monospace; }
+    .availability-badge { padding: 0.375rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; }
+    .availability-badge.available { background: #d1fae5; color: #047857; }
+    .availability-badge.unavailable { background: #fee2e2; color: #b91c1c; }
+    .result-details { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+    .detail-item { display: flex; flex-direction: column; }
+    .detail-item .label { font-size: 0.75rem; color: #6b7280; text-transform: uppercase; margin-bottom: 0.25rem; }
+    .detail-item .value { font-weight: 500; color: #1e293b; }
+    .unavailable-notice { display: flex; align-items: center; gap: 0.5rem; margin-top: 1rem; padding: 0.75rem; background: #fef3c7; border-radius: 6px; color: #b45309; font-size: 0.875rem; }
+    .notice-icon { font-size: 1rem; }
+
+    .sku-error { margin-top: 1rem; display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1rem; background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; color: #b91c1c; font-size: 0.875rem; }
+    .error-icon { font-size: 1rem; }
+
+    .spinner-sm { width: 16px; height: 16px; border: 2px solid rgba(255, 255, 255, 0.3); border-top-color: white; border-radius: 50%; animation: spin 0.6s linear infinite; display: inline-block; }
   `]
 })
 export class ClientProductsComponent implements OnInit {
   private productsApi = inject(ProductsApiService);
   private inventoryApi = inject(InventoryApiService);
+  private toast = inject(ToastService);
 
   products = signal<ProductWithStock[]>([]);
   loading = signal(false);
@@ -151,6 +243,12 @@ export class ClientProductsComponent implements OnInit {
   pageSize = signal(12);
   filterValues = signal<Record<string, any>>({});
 
+  // SKU Search
+  skuSearchTerm = '';
+  skuSearching = signal(false);
+  skuSearchResult = signal<ProductSearchResult | null>(null);
+  skuSearchError = signal<string | null>(null);
+
   filterFields: FilterField[] = [
     { key: 'name', label: 'Rechercher', type: 'text', placeholder: 'Nom du produit...' },
     { key: 'category', label: 'Catégorie', type: 'text', placeholder: 'Catégorie...' }
@@ -158,6 +256,35 @@ export class ClientProductsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadProducts();
+  }
+
+  searchBySku(): void {
+    if (!this.skuSearchTerm.trim()) return;
+    
+    this.skuSearching.set(true);
+    this.skuSearchResult.set(null);
+    this.skuSearchError.set(null);
+
+    this.productsApi.getBySku(this.skuSearchTerm.trim()).subscribe({
+      next: (result) => {
+        this.skuSearchResult.set(result);
+        this.skuSearching.set(false);
+        if (!result.active) {
+          this.toast.warning('Ce produit est indisponible à la vente');
+        } else {
+          this.toast.success('Produit trouvé et disponible');
+        }
+      },
+      error: (err) => {
+        this.skuSearching.set(false);
+        if (err.status === 404) {
+          this.skuSearchError.set('Produit non trouvé avec ce SKU');
+        } else {
+          this.skuSearchError.set('Erreur lors de la recherche');
+        }
+        this.toast.error('Produit non trouvé');
+      }
+    });
   }
 
   loadProducts(): void {

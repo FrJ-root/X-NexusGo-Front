@@ -6,7 +6,7 @@ import { DataTableComponent, TableColumn, TableAction } from '../../../shared/co
 import { SearchFiltersComponent, FilterField } from '../../../shared/components/search-filters/search-filters.component';
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { ToastService } from '../../../shared/services/toast.service';
-import { SalesOrder, OrderStatus, ReservationResult } from '../../../shared/models';
+import { SalesOrder, OrderStatus } from '../../../shared/models';
 
 @Component({
   selector: 'app-warehouse-orders',
@@ -311,17 +311,15 @@ export class WarehouseOrdersComponent implements OnInit {
     if (!order?.id) return;
     this.processing.set(true);
 
-    this.ordersApi.reserve(order.id).subscribe({
-      next: (result: ReservationResult) => {
-        if (result.fullyReserved) {
+    this.ordersApi.reserve(order.id, true).subscribe({
+      next: (updatedOrder: SalesOrder) => {
+        if (updatedOrder.status === 'RESERVED') {
           this.toast.success('Stock entièrement réservé - Prêt pour expédition');
-        } else {
+        } else if (updatedOrder.status === 'PARTIALLY_RESERVED') {
           this.toast.warning('Réservation partielle - Certains articles sont en rupture');
         }
-        this.ordersApi.getById(order.id!).subscribe((updated: SalesOrder) => {
-          this.selectedOrder.set(updated);
-          this.loadOrders();
-        });
+        this.selectedOrder.set(updatedOrder);
+        this.loadOrders();
         this.processing.set(false);
       },
       error: () => this.processing.set(false)

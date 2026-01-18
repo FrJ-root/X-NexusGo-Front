@@ -1,8 +1,10 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ShipmentsApiService } from '../../../api/shipments-api.service';
 import { DataTableComponent, TableColumn, TableAction } from '../../../shared/components/data-table/data-table.component';
 import { SearchFiltersComponent, FilterField } from '../../../shared/components/search-filters/search-filters.component';
+import { ToastService } from '../../../shared/services/toast.service';
 import { Shipment, ShipmentStatus, Page } from '../../../shared/models';
 
 @Component({
@@ -10,6 +12,7 @@ import { Shipment, ShipmentStatus, Page } from '../../../shared/models';
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     DataTableComponent,
     SearchFiltersComponent
   ],
@@ -20,7 +23,34 @@ import { Shipment, ShipmentStatus, Page } from '../../../shared/models';
           <h1>Mes livraisons</h1>
           <p class="subtitle">Suivez vos expéditions en temps réel</p>
         </div>
+        
+        <!-- Quick Search by Order -->
+        <div class="quick-search">
+          <input 
+            type="number" 
+            [(ngModel)]="orderIdSearch" 
+            placeholder="N° Commande..."
+            class="order-input"
+          />
+          <button 
+            class="btn btn-primary" 
+            (click)="searchByOrderId()"
+            [disabled]="orderSearching()"
+          >
+            @if (orderSearching()) {
+              <span class="spinner-small"></span>
+            } @else {
+              🔍 Rechercher
+            }
+          </button>
+        </div>
       </div>
+
+      @if (orderSearchError()) {
+        <div class="alert alert-warning">
+          {{ orderSearchError() }}
+        </div>
+      }
 
       <app-search-filters
         [fields]="filterFields"
@@ -186,10 +216,21 @@ import { Shipment, ShipmentStatus, Page } from '../../../shared/models';
     .order-reference { display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem; background: #eff6ff; border-radius: 8px; }
     .ref-label { font-size: 0.875rem; color: #6b7280; }
     .ref-value { font-weight: 600; color: #1d4ed8; }
+
+    .quick-search { display: flex; gap: 0.5rem; align-items: center; }
+    .order-input { padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 8px; font-size: 0.875rem; width: 140px; }
+    .order-input:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+
+    .alert { padding: 0.75rem 1rem; border-radius: 8px; margin-bottom: 1rem; font-size: 0.875rem; }
+    .alert-warning { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
+
+    .spinner-small { display: inline-block; width: 14px; height: 14px; border: 2px solid white; border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
   `]
 })
 export class ClientShipmentsComponent implements OnInit {
   private shipmentsApi = inject(ShipmentsApiService);
+  private toast = inject(ToastService);
 
   // Expose enum to template
   ShipmentStatus = ShipmentStatus;
@@ -204,6 +245,11 @@ export class ClientShipmentsComponent implements OnInit {
 
   showDetailModal = signal(false);
   selectedShipment = signal<Shipment | null>(null);
+
+  // Order search
+  orderIdSearch: number | null = null;
+  orderSearching = signal(false);
+  orderSearchError = signal<string | null>(null);
 
   private statusOrder: ShipmentStatus[] = [ShipmentStatus.PENDING, ShipmentStatus.IN_TRANSIT, ShipmentStatus.DELIVERED];
 
@@ -303,6 +349,32 @@ export class ClientShipmentsComponent implements OnInit {
     const trackingNumber = this.selectedShipment()?.trackingNumber;
     if (trackingNumber) {
       navigator.clipboard.writeText(trackingNumber);
+      this.toast.success('Numéro de suivi copié !');
     }
+  }
+
+  searchByOrderId(): void {
+    if (!this.orderIdSearch) return;
+    
+    this.orderSearching.set(true);
+    this.orderSearchError.set(null);
+
+    this.shipmentsApi.getShipmentForOrder(this.orderIdSearch).subscribe({
+      next: (shipment: Shipment) => {
+        this.selectedShipment.set(shipment);
+        this.showDetailModal.set(true);
+        this.orderSearching.set(false);
+        this.toast.success('Expédition trouvée !');
+      },
+      error: (err) => {
+        this.orderSearching.set(false);
+        if (err.status === 404) {
+          this.orderSearchError.set('Aucune expédition trouvée pour cette commande');
+        } else {
+          this.orderSearchError.set('Erreur lors de la recherche');
+        }
+        this.toast.error('Expédition non trouvée');
+      }
+    });
   }
 }

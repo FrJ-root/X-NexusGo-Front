@@ -1,5 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { SalesOrdersApiService } from '../../../api/sales-orders-api.service';
 import { DataTableComponent, TableColumn, TableAction } from '../../../shared/components/data-table/data-table.component';
@@ -13,6 +14,7 @@ import { SalesOrder, OrderStatus, Page } from '../../../shared/models';
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     RouterLink,
     DataTableComponent,
     SearchFiltersComponent,
@@ -145,11 +147,49 @@ import { SalesOrder, OrderStatus, Page } from '../../../shared/models';
             </div>
             <div class="modal-footer">
               @if (selectedOrder()?.status === OrderStatus.CREATED) {
+                <button class="btn btn-success" (click)="showReserveDialog.set(true)">
+                  📦 Réserver le stock
+                </button>
                 <button class="btn btn-danger" (click)="showCancelConfirm.set(true)">
                   Annuler la commande
                 </button>
               }
               <button class="btn btn-secondary" (click)="closeDetailModal()">Fermer</button>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Reserve Stock Dialog -->
+      @if (showReserveDialog()) {
+        <div class="modal-overlay" (click)="showReserveDialog.set(false)">
+          <div class="modal" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+              <h2>📦 Réserver le stock</h2>
+              <button class="close-btn" (click)="showReserveDialog.set(false)">×</button>
+            </div>
+            <div class="modal-body">
+              <p>Voulez-vous réserver le stock pour la commande #{{ selectedOrder()?.id }} ?</p>
+              
+              <div class="reserve-option">
+                <label class="checkbox-label">
+                  <input type="checkbox" [(ngModel)]="allowPartialReserve">
+                  <span>Autoriser la réservation partielle</span>
+                </label>
+                <p class="option-hint">
+                  Si activé, la commande sera partiellement réservée si tout le stock n'est pas disponible.
+                </p>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-secondary" (click)="showReserveDialog.set(false)">Annuler</button>
+              <button class="btn btn-success" (click)="reserveStock()" [disabled]="reserving()">
+                @if (reserving()) {
+                  <span class="spinner-small"></span> Réservation...
+                } @else {
+                  ✓ Confirmer la réservation
+                }
+              </button>
             </div>
           </div>
         </div>
@@ -220,6 +260,18 @@ import { SalesOrder, OrderStatus, Page } from '../../../shared/models';
     .timeline-item.completed .timeline-marker { background: #10b981; }
     .timeline-title { font-size: 0.875rem; color: #6b7280; }
     .timeline-item.completed .timeline-title { color: #111827; font-weight: 500; }
+
+    .btn-success { background: #10b981; color: white; }
+    .btn-success:hover { background: #059669; }
+    .btn-success:disabled { background: #9ca3af; cursor: not-allowed; }
+
+    .reserve-option { background: #f9fafb; padding: 1rem; border-radius: 8px; margin-top: 1rem; }
+    .checkbox-label { display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500; }
+    .checkbox-label input { width: 18px; height: 18px; accent-color: #3b82f6; }
+    .option-hint { margin: 0.5rem 0 0; font-size: 0.8rem; color: #6b7280; }
+
+    .spinner-small { display: inline-block; width: 14px; height: 14px; border: 2px solid white; border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
   `]
 })
 export class ClientOrdersComponent implements OnInit {
@@ -242,6 +294,11 @@ export class ClientOrdersComponent implements OnInit {
   selectedOrder = signal<SalesOrder | null>(null);
   showCancelConfirm = signal(false);
   canceling = signal(false);
+
+  // Reserve stock
+  showReserveDialog = signal(false);
+  allowPartialReserve = false;
+  reserving = signal(false);
 
   private statusOrder: OrderStatus[] = [OrderStatus.CREATED, OrderStatus.CONFIRMED, OrderStatus.RESERVED, OrderStatus.SHIPPED, OrderStatus.DELIVERED];
 
@@ -347,6 +404,35 @@ export class ClientOrdersComponent implements OnInit {
         this.canceling.set(false);
       },
       error: () => this.canceling.set(false)
+    });
+  }
+
+  reserveStock(): void {
+    const order = this.selectedOrder();
+    if (!order?.id) return;
+    this.reserving.set(true);
+
+    this.ordersApi.reserve(order.id, this.allowPartialReserve).subscribe({
+      next: (updatedOrder: SalesOrder) => {
+        if (updatedOrder.status === 'PARTIALLY_RESERVED') {
+          this.toast.warning('Stock partiellement réservé. Certains articles sont indisponibles.');
+        } else {
+          this.toast.success('Stock réservé avec succès !');
+        }
+        this.showReserveDialog.set(false);
+        this.selectedOrder.set(updatedOrder);
+        this.loadOrders();
+        this.reserving.set(false);
+        this.allowPartialReserve = false;
+      },
+      error: (err) => {
+        if (err.status === 400) {
+          this.toast.error('Stock insuffisant pour cette commande');
+        } else {
+          this.toast.error('Erreur lors de la réservation');
+        }
+        this.reserving.set(false);
+      }
     });
   }
 
