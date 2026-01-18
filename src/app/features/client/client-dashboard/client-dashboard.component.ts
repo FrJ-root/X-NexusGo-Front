@@ -268,17 +268,19 @@ import { SalesOrder, Shipment, Page, OrderStatus, ShipmentStatus } from '../../.
   `,
   styles: [`
     :host {
-      --primary: #3b82f6;
-      --primary-dark: #2563eb;
-      --primary-light: #60a5fa;
+      --primary: #001f3f;
+      --primary-dark: #001530;
+      --primary-light: #003366;
+      --secondary: #ff6600;
+      --secondary-light: #ff8533;
       --success: #10b981;
       --success-light: #d1fae5;
       --warning: #f59e0b;
       --warning-light: #fef3c7;
       --danger: #ef4444;
       --danger-light: #fee2e2;
-      --info: #06b6d4;
-      --info-light: #cffafe;
+      --info: #0ea5e9;
+      --info-light: #e0f2fe;
       --gray-900: #111827;
       --gray-700: #374151;
       --gray-600: #4b5563;
@@ -296,14 +298,30 @@ import { SalesOrder, Shipment, Page, OrderStatus, ShipmentStatus } from '../../.
       --radius-sm: 10px;
     }
 
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
     .dashboard {
       max-width: 1300px;
       margin: 0 auto;
+      animation: fadeInUp 0.5s ease-out;
     }
 
     /* Welcome Banner */
     .welcome-banner {
-      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
       border-radius: var(--radius);
       padding: 2rem;
       margin-bottom: 2rem;
@@ -313,6 +331,17 @@ import { SalesOrder, Shipment, Page, OrderStatus, ShipmentStatus } from '../../.
       position: relative;
       overflow: hidden;
       color: var(--white);
+    }
+
+    .welcome-banner::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 300px;
+      height: 300px;
+      background: rgba(255, 102, 0, 0.1);
+      border-radius: 50%;
     }
 
     .welcome-content {
@@ -357,28 +386,29 @@ import { SalesOrder, Shipment, Page, OrderStatus, ShipmentStatus } from '../../.
       border-radius: var(--radius-sm);
       text-decoration: none;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.3s ease;
       border: none;
     }
 
     .btn-primary {
-      background: var(--white);
-      color: var(--primary);
+      background: linear-gradient(135deg, var(--secondary), var(--secondary-light));
+      color: var(--white);
     }
 
     .btn-primary:hover {
-      background: var(--gray-100);
-      transform: translateY(-1px);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 102, 0, 0.4);
     }
 
     .btn-outline {
-      background: transparent;
+      background: rgba(255, 255, 255, 0.15);
       color: var(--white);
-      border: 2px solid rgba(255, 255, 255, 0.5);
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      backdrop-filter: blur(4px);
     }
 
     .btn-outline:hover {
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.25);
       border-color: var(--white);
     }
 
@@ -407,7 +437,7 @@ import { SalesOrder, Shipment, Page, OrderStatus, ShipmentStatus } from '../../.
 
     .circle-1 { width: 100%; height: 100%; }
     .circle-2 { width: 70%; height: 70%; top: 15%; left: 15%; }
-    .circle-3 { width: 40%; height: 40%; top: 30%; left: 30%; background: rgba(255, 255, 255, 0.15); }
+    .circle-3 { width: 40%; height: 40%; top: 30%; left: 30%; background: rgba(255, 102, 0, 0.2); }
 
     .truck-icon {
       position: absolute;
@@ -415,6 +445,7 @@ import { SalesOrder, Shipment, Page, OrderStatus, ShipmentStatus } from '../../.
       left: 50%;
       transform: translate(-50%, -50%);
       font-size: 3rem;
+      animation: float 3s ease-in-out infinite;
     }
 
     @media (max-width: 768px) {
@@ -445,6 +476,18 @@ import { SalesOrder, Shipment, Page, OrderStatus, ShipmentStatus } from '../../.
       box-shadow: var(--shadow);
       position: relative;
       overflow: hidden;
+      transition: all 0.3s ease;
+      animation: fadeInUp 0.5s ease-out both;
+    }
+
+    .stat-card:nth-child(1) { animation-delay: 0.1s; }
+    .stat-card:nth-child(2) { animation-delay: 0.2s; }
+    .stat-card:nth-child(3) { animation-delay: 0.3s; }
+    .stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
     }
 
     .stat-card::before {
@@ -457,7 +500,7 @@ import { SalesOrder, Shipment, Page, OrderStatus, ShipmentStatus } from '../../.
     }
 
     .stat-primary::before { background: var(--primary); }
-    .stat-warning::before { background: var(--warning); }
+    .stat-warning::before { background: var(--secondary); }
     .stat-success::before { background: var(--success); }
     .stat-info::before { background: var(--info); }
 
@@ -469,10 +512,15 @@ import { SalesOrder, Shipment, Page, OrderStatus, ShipmentStatus } from '../../.
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
+      transition: transform 0.3s ease;
     }
 
-    .stat-primary .stat-icon { background: rgba(59, 130, 246, 0.1); color: var(--primary); }
-    .stat-warning .stat-icon { background: var(--warning-light); color: var(--warning); }
+    .stat-card:hover .stat-icon {
+      transform: scale(1.1);
+    }
+
+    .stat-primary .stat-icon { background: rgba(0, 31, 63, 0.1); color: var(--primary); }
+    .stat-warning .stat-icon { background: rgba(255, 102, 0, 0.1); color: var(--secondary); }
     .stat-success .stat-icon { background: var(--success-light); color: var(--success); }
     .stat-info .stat-icon { background: var(--info-light); color: var(--info); }
 
@@ -511,6 +559,12 @@ import { SalesOrder, Shipment, Page, OrderStatus, ShipmentStatus } from '../../.
       background: var(--white);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
+      transition: all 0.3s ease;
+      animation: fadeInUp 0.5s ease-out both;
+    }
+
+    .card:hover {
+      box-shadow: var(--shadow-md);
     }
 
     .card-header {
@@ -532,17 +586,19 @@ import { SalesOrder, Shipment, Page, OrderStatus, ShipmentStatus } from '../../.
     }
 
     .card-header h2 svg {
-      color: var(--gray-400);
+      color: var(--secondary);
     }
 
     .card-link {
       font-size: 0.8125rem;
-      color: var(--primary);
+      color: var(--secondary);
       text-decoration: none;
       font-weight: 500;
+      transition: color 0.2s;
     }
 
     .card-link:hover {
+      color: var(--secondary-light);
       text-decoration: underline;
     }
 
@@ -574,21 +630,28 @@ import { SalesOrder, Shipment, Page, OrderStatus, ShipmentStatus } from '../../.
       border-radius: var(--radius-sm);
       text-decoration: none;
       background: var(--gray-50);
-      transition: all 0.2s;
+      transition: all 0.3s ease;
+      animation: slideInRight 0.4s ease-out both;
     }
+
+    .action-tile:nth-child(1) { animation-delay: 0.1s; }
+    .action-tile:nth-child(2) { animation-delay: 0.2s; }
+    .action-tile:nth-child(3) { animation-delay: 0.3s; }
+    .action-tile:nth-child(4) { animation-delay: 0.4s; }
 
     .action-tile:hover {
       background: var(--gray-100);
-      transform: translateX(4px);
+      transform: translateX(6px);
     }
 
     .action-tile.highlight {
-      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
       color: var(--white);
     }
 
     .action-tile.highlight:hover {
       box-shadow: var(--shadow-md);
+      transform: translateX(6px);
     }
 
     .action-tile.highlight .action-title,
@@ -608,12 +671,17 @@ import { SalesOrder, Shipment, Page, OrderStatus, ShipmentStatus } from '../../.
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
+      transition: transform 0.3s ease;
     }
 
-    .action-icon.catalog { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
-    .action-icon.order { background: rgba(255, 255, 255, 0.2); color: var(--white); }
+    .action-tile:hover .action-icon {
+      transform: scale(1.1);
+    }
+
+    .action-icon.catalog { background: rgba(0, 31, 63, 0.1); color: var(--primary); }
+    .action-icon.order { background: rgba(255, 102, 0, 0.2); color: var(--white); }
     .action-icon.history { background: rgba(16, 185, 129, 0.1); color: var(--success); }
-    .action-icon.tracking { background: rgba(6, 182, 212, 0.1); color: var(--info); }
+    .action-icon.tracking { background: rgba(14, 165, 233, 0.1); color: var(--info); }
 
     .action-info { flex: 1; }
     .action-title { display: block; font-weight: 600; font-size: 0.9375rem; color: var(--gray-900); }
@@ -621,12 +689,12 @@ import { SalesOrder, Shipment, Page, OrderStatus, ShipmentStatus } from '../../.
 
     .action-arrow {
       color: var(--gray-300);
-      transition: transform 0.2s;
+      transition: all 0.3s ease;
     }
 
     .action-tile:hover .action-arrow {
-      transform: translateX(3px);
-      color: var(--gray-400);
+      transform: translateX(4px);
+      color: var(--secondary);
     }
 
     .action-tile.highlight .action-arrow {
@@ -666,8 +734,8 @@ import { SalesOrder, Shipment, Page, OrderStatus, ShipmentStatus } from '../../.
       font-weight: 500;
     }
 
-    .shipment-status.status-pending { background: var(--warning-light); color: #b45309; }
-    .shipment-status.status-in_transit { background: rgba(59, 130, 246, 0.1); color: var(--primary); }
+    .shipment-status.status-pending { background: rgba(255, 102, 0, 0.1); color: var(--secondary); }
+    .shipment-status.status-in_transit { background: rgba(0, 31, 63, 0.1); color: var(--primary); }
     .shipment-status.status-delivered { background: var(--success-light); color: var(--success); }
     .shipment-status.status-canceled { background: var(--danger-light); color: var(--danger); }
 
@@ -702,9 +770,9 @@ import { SalesOrder, Shipment, Page, OrderStatus, ShipmentStatus } from '../../.
 
     .progress-fill {
       height: 100%;
-      background: linear-gradient(90deg, var(--primary), var(--primary-light));
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
       border-radius: 3px;
-      transition: width 0.5s ease;
+      transition: width 0.8s ease;
     }
 
     .progress-steps {
@@ -768,10 +836,10 @@ import { SalesOrder, Shipment, Page, OrderStatus, ShipmentStatus } from '../../.
     }
 
     .status-pill.status-created { background: var(--gray-100); color: var(--gray-600); }
-    .status-pill.status-confirmed { background: rgba(59, 130, 246, 0.1); color: var(--primary); }
+    .status-pill.status-confirmed { background: rgba(0, 31, 63, 0.1); color: var(--primary); }
     .status-pill.status-reserved,
-    .status-pill.status-partially_reserved { background: var(--warning-light); color: #b45309; }
-    .status-pill.status-shipped { background: rgba(139, 92, 246, 0.1); color: #7c3aed; }
+    .status-pill.status-partially_reserved { background: rgba(255, 102, 0, 0.1); color: var(--secondary); }
+    .status-pill.status-shipped { background: rgba(14, 165, 233, 0.1); color: var(--info); }
     .status-pill.status-delivered { background: var(--success-light); color: var(--success); }
     .status-pill.status-canceled { background: var(--danger-light); color: var(--danger); }
 
@@ -782,14 +850,14 @@ import { SalesOrder, Shipment, Page, OrderStatus, ShipmentStatus } from '../../.
       padding: 0.375rem 0.75rem;
       font-size: 0.8125rem;
       font-weight: 500;
-      color: var(--primary);
+      color: var(--secondary);
       text-decoration: none;
       border-radius: 6px;
-      transition: all 0.2s;
+      transition: all 0.3s ease;
     }
 
     .view-btn:hover {
-      background: rgba(59, 130, 246, 0.1);
+      background: rgba(255, 102, 0, 0.1);
     }
 
     /* Empty States */

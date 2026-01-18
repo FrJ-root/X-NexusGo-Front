@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
@@ -45,18 +45,44 @@ interface Integration {
 
       <!-- Hero Section -->
       <section class="hero">
-        <div class="hero-bg"></div>
+        <div class="hero-bg">
+          <div class="hero-particles">
+            @for (i of [1,2,3,4,5,6,7,8,9,10]; track i) {
+              <div class="particle" [style.--delay]="(i * 0.6) + 's'" [style.--x]="(i * 10) + '%'"></div>
+            }
+          </div>
+          <div class="hero-shape shape-1"></div>
+          <div class="hero-shape shape-2"></div>
+        </div>
         <div class="container">
-          <div class="hero-content">
-            <span class="section-badge">Fonctionnalités</span>
-            <h1 class="hero-title">
+          <div class="hero-content animate-hero">
+            <span class="section-badge animate-fade-in">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              Fonctionnalités
+            </span>
+            <h1 class="hero-title animate-slide-up">
               Des outils puissants pour une
               <span class="gradient-text">logistique optimisée</span>
             </h1>
-            <p class="hero-description">
+            <p class="hero-description animate-slide-up-delay">
               Découvrez toutes les fonctionnalités qui font de X-NexusGo la solution 
-              de référence pour la gestion logistique mondiale.
+              de référence pour la gestion logistique mondiale. Plus de 500 entreprises 
+              nous font déjà confiance.
             </p>
+            <div class="hero-metrics animate-slide-up-delay-2">
+              <div class="metric">
+                <span class="metric-value">-35%</span>
+                <span class="metric-label">Coûts logistiques</span>
+              </div>
+              <div class="metric">
+                <span class="metric-value">+98%</span>
+                <span class="metric-label">Précision stocks</span>
+              </div>
+              <div class="metric">
+                <span class="metric-value">2x</span>
+                <span class="metric-label">Productivité</span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -66,7 +92,7 @@ interface Integration {
         <div class="container">
           <div class="features-grid">
             @for (feature of mainFeatures; track feature.title; let i = $index) {
-              <div class="feature-card" [class.expanded]="expandedFeature() === i" (click)="toggleFeature(i)">
+              <div class="feature-card animate-on-scroll" [class.expanded]="expandedFeature() === i" (click)="toggleFeature(i)" [style.--delay]="(i * 0.08) + 's'">
                 <div class="feature-header">
                   <div class="feature-icon">{{ feature.icon }}</div>
                   <div class="feature-info">
@@ -450,12 +476,52 @@ interface Integration {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       color: var(--gray-800);
       line-height: 1.6;
+      overflow-x: hidden;
     }
 
     .container {
       max-width: 1200px;
       margin: 0 auto;
       padding: 0 1.5rem;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(50px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes particleFloat {
+      0%, 100% { transform: translateY(0); opacity: 0.4; }
+      50% { transform: translateY(-120px); opacity: 0.8; }
+    }
+
+    .animate-hero { animation: fadeIn 0.8s ease-out forwards; }
+    .animate-fade-in { animation: fadeIn 0.6s ease-out 0.2s both; }
+    .animate-slide-up { animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both; }
+    .animate-slide-up-delay { animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both; }
+    .animate-slide-up-delay-2 { animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.7s both; }
+
+    .animate-on-scroll {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      transition-delay: var(--delay, 0s);
+    }
+
+    .animate-on-scroll.visible {
+      opacity: 1;
+      transform: translateY(0);
     }
 
     /* Buttons */
@@ -590,13 +656,55 @@ interface Integration {
       position: relative;
       padding: 10rem 1.5rem 6rem;
       text-align: center;
+      overflow: hidden;
     }
 
     .hero-bg {
       position: absolute;
       inset: 0;
-      background: linear-gradient(135deg, var(--gray-50) 0%, var(--white) 50%, rgba(79, 70, 229, 0.05) 100%);
+      background: linear-gradient(135deg, var(--gray-50) 0%, var(--white) 50%, rgba(255, 102, 0, 0.03) 100%);
       z-index: -1;
+    }
+
+    .hero-particles {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: var(--secondary);
+      border-radius: 50%;
+      left: var(--x, 50%);
+      bottom: -20px;
+      animation: particleFloat 10s ease-in-out infinite;
+      animation-delay: var(--delay, 0s);
+    }
+
+    .hero-shape {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.3;
+    }
+
+    .hero-shape.shape-1 {
+      width: 500px;
+      height: 500px;
+      background: linear-gradient(135deg, rgba(0, 31, 63, 0.2) 0%, rgba(255, 102, 0, 0.1) 100%);
+      top: -200px;
+      right: -100px;
+    }
+
+    .hero-shape.shape-2 {
+      width: 400px;
+      height: 400px;
+      background: rgba(255, 102, 0, 0.15);
+      bottom: -100px;
+      left: -100px;
     }
 
     .hero-title {
@@ -610,24 +718,57 @@ interface Integration {
     .hero-description {
       font-size: 1.25rem;
       color: var(--gray-600);
-      max-width: 600px;
-      margin: 0 auto;
+      max-width: 650px;
+      margin: 0 auto 2rem;
+      line-height: 1.7;
+    }
+
+    .hero-metrics {
+      display: flex;
+      justify-content: center;
+      gap: 3rem;
+      flex-wrap: wrap;
+    }
+
+    .metric {
+      text-align: center;
+    }
+
+    .metric-value {
+      display: block;
+      font-size: 2rem;
+      font-weight: 800;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .metric-label {
+      font-size: 0.9rem;
+      color: var(--gray-500);
+      font-weight: 500;
     }
 
     .section-badge {
-      display: inline-block;
-      background: rgba(79, 70, 229, 0.1);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: linear-gradient(135deg, rgba(0, 31, 63, 0.1) 0%, rgba(255, 102, 0, 0.1) 100%);
       color: var(--primary);
       padding: 0.5rem 1rem;
       border-radius: 50px;
       font-size: 0.875rem;
       font-weight: 600;
       margin-bottom: 1rem;
+      border: 1px solid rgba(0, 31, 63, 0.1);
     }
 
     @media (max-width: 768px) {
       .hero { padding: 7rem 1rem 4rem; }
       .hero-title { font-size: 2rem; }
+      .hero-metrics { gap: 1.5rem; }
+      .metric-value { font-size: 1.5rem; }
     }
 
     /* Features Grid Section */
@@ -1289,13 +1430,42 @@ export class FeaturesComponent {
   integrations: Integration[] = [
     { name: 'Stripe', icon: '💳', category: 'Paiement' },
     { name: 'Shopify', icon: '🛍️', category: 'E-commerce' },
+    { name: 'WooCommerce', icon: '🛒', category: 'E-commerce' },
     { name: 'DHL', icon: '📦', category: 'Transport' },
+    { name: 'FedEx', icon: '🚚', category: 'Transport' },
+    { name: 'UPS', icon: '📮', category: 'Transport' },
     { name: 'Slack', icon: '💬', category: 'Communication' },
+    { name: 'SAP', icon: '💼', category: 'ERP' },
     { name: 'QuickBooks', icon: '📒', category: 'Comptabilité' },
-    { name: 'Zapier', icon: '⚡', category: 'Automation' }
+    { name: 'Zapier', icon: '⚡', category: 'Automation' },
+    { name: 'Magento', icon: '🏪', category: 'E-commerce' },
+    { name: 'Salesforce', icon: '☁️', category: 'CRM' }
   ];
+
+  ngAfterViewInit() {
+    this.initScrollAnimations();
+  }
 
   toggleFeature(index: number) {
     this.expandedFeature.update(current => current === index ? null : index);
+  }
+
+  private initScrollAnimations() {
+    if (typeof IntersectionObserver !== 'undefined') {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+            }
+          });
+        },
+        { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+      );
+
+      document.querySelectorAll('.animate-on-scroll').forEach(el => {
+        observer.observe(el);
+      });
+    }
   }
 }

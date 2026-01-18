@@ -343,16 +343,18 @@ interface ActivityItem {
   `,
   styles: [`
     :host {
-      --primary: #4f46e5;
-      --primary-light: #818cf8;
+      --primary: #001f3f;
+      --primary-light: #003366;
+      --secondary: #ff6600;
+      --secondary-light: #ff8533;
       --success: #10b981;
       --success-light: #d1fae5;
       --warning: #f59e0b;
       --warning-light: #fef3c7;
       --danger: #ef4444;
       --danger-light: #fee2e2;
-      --info: #06b6d4;
-      --info-light: #cffafe;
+      --info: #0ea5e9;
+      --info-light: #e0f2fe;
       --gray-900: #111827;
       --gray-700: #374151;
       --gray-600: #4b5563;
@@ -370,9 +372,30 @@ interface ActivityItem {
       --radius-sm: 8px;
     }
 
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+
     .dashboard {
       max-width: 1400px;
       margin: 0 auto;
+      animation: fadeInUp 0.5s ease-out;
     }
 
     /* Welcome Header */
@@ -383,6 +406,34 @@ interface ActivityItem {
       margin-bottom: 2rem;
       flex-wrap: wrap;
       gap: 1rem;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      border-radius: var(--radius);
+      padding: 2rem;
+      color: var(--white);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .welcome-header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 300px;
+      height: 300px;
+      background: rgba(255, 102, 0, 0.1);
+      border-radius: 50%;
+    }
+
+    .welcome-header::after {
+      content: '';
+      position: absolute;
+      bottom: -30%;
+      right: 10%;
+      width: 200px;
+      height: 200px;
+      background: rgba(255, 102, 0, 0.15);
+      border-radius: 50%;
     }
 
     .welcome-content {
@@ -390,12 +441,14 @@ interface ActivityItem {
       align-items: center;
       gap: 2rem;
       flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
     }
 
     .greeting {
       display: block;
       font-size: 0.9rem;
-      color: var(--gray-500);
+      color: rgba(255, 255, 255, 0.8);
       margin-bottom: 0.25rem;
     }
 
@@ -403,17 +456,19 @@ interface ActivityItem {
       margin: 0 0 0.25rem;
       font-size: 1.75rem;
       font-weight: 700;
-      color: var(--gray-900);
+      color: var(--white);
     }
 
     .welcome-text p {
       margin: 0;
-      color: var(--gray-500);
+      color: rgba(255, 255, 255, 0.8);
     }
 
     .header-actions {
       display: flex;
       gap: 0.75rem;
+      position: relative;
+      z-index: 1;
     }
 
     .btn {
@@ -426,29 +481,30 @@ interface ActivityItem {
       border-radius: var(--radius-sm);
       text-decoration: none;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.3s ease;
       border: none;
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, var(--primary), #7c3aed);
+      background: linear-gradient(135deg, var(--secondary), var(--secondary-light));
       color: var(--white);
     }
 
     .btn-primary:hover {
-      transform: translateY(-1px);
-      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 102, 0, 0.4);
     }
 
     .btn-outline {
-      background: var(--white);
-      color: var(--gray-700);
-      border: 1px solid var(--gray-300);
+      background: rgba(255, 255, 255, 0.15);
+      color: var(--white);
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      backdrop-filter: blur(4px);
     }
 
     .btn-outline:hover {
-      background: var(--gray-50);
-      border-color: var(--gray-400);
+      background: rgba(255, 255, 255, 0.25);
+      border-color: var(--white);
     }
 
     .date-display {
@@ -456,11 +512,13 @@ interface ActivityItem {
       align-items: center;
       gap: 0.5rem;
       padding: 0.5rem 1rem;
-      background: var(--white);
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(4px);
       border-radius: var(--radius-sm);
-      box-shadow: var(--shadow);
       font-size: 0.875rem;
-      color: var(--gray-600);
+      color: var(--white);
+      position: relative;
+      z-index: 1;
     }
 
     /* KPI Cards */
@@ -480,6 +538,18 @@ interface ActivityItem {
       box-shadow: var(--shadow);
       position: relative;
       overflow: hidden;
+      transition: all 0.3s ease;
+      animation: fadeInUp 0.5s ease-out both;
+    }
+
+    .kpi-card:nth-child(1) { animation-delay: 0.1s; }
+    .kpi-card:nth-child(2) { animation-delay: 0.2s; }
+    .kpi-card:nth-child(3) { animation-delay: 0.3s; }
+    .kpi-card:nth-child(4) { animation-delay: 0.4s; }
+
+    .kpi-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
     }
 
     .kpi-card::before {
@@ -493,8 +563,8 @@ interface ActivityItem {
 
     .kpi-primary::before { background: linear-gradient(90deg, var(--primary), var(--primary-light)); }
     .kpi-success::before { background: linear-gradient(90deg, var(--success), #34d399); }
-    .kpi-warning::before { background: linear-gradient(90deg, var(--warning), #fbbf24); }
-    .kpi-info::before { background: linear-gradient(90deg, var(--info), #22d3ee); }
+    .kpi-warning::before { background: linear-gradient(90deg, var(--secondary), var(--secondary-light)); }
+    .kpi-info::before { background: linear-gradient(90deg, var(--info), #38bdf8); }
 
     .kpi-icon {
       width: 56px;
@@ -504,11 +574,16 @@ interface ActivityItem {
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
+      transition: transform 0.3s ease;
     }
 
-    .kpi-primary .kpi-icon { background: rgba(79, 70, 229, 0.1); color: var(--primary); }
+    .kpi-card:hover .kpi-icon {
+      transform: scale(1.1);
+    }
+
+    .kpi-primary .kpi-icon { background: rgba(0, 31, 63, 0.1); color: var(--primary); }
     .kpi-success .kpi-icon { background: var(--success-light); color: var(--success); }
-    .kpi-warning .kpi-icon { background: var(--warning-light); color: var(--warning); }
+    .kpi-warning .kpi-icon { background: rgba(255, 102, 0, 0.1); color: var(--secondary); }
     .kpi-info .kpi-icon { background: var(--info-light); color: var(--info); }
 
     .kpi-content {
@@ -553,6 +628,12 @@ interface ActivityItem {
       background: var(--white);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
+      transition: all 0.3s ease;
+      animation: fadeInUp 0.5s ease-out both;
+    }
+
+    .card:hover {
+      box-shadow: var(--shadow-md);
     }
 
     .card-header {
@@ -574,17 +655,19 @@ interface ActivityItem {
     }
 
     .card-header h2 svg {
-      color: var(--gray-400);
+      color: var(--secondary);
     }
 
     .card-link {
       font-size: 0.875rem;
-      color: var(--primary);
+      color: var(--secondary);
       text-decoration: none;
       font-weight: 500;
+      transition: color 0.2s;
     }
 
     .card-link:hover {
+      color: var(--secondary-light);
       text-decoration: underline;
     }
 
@@ -603,7 +686,14 @@ interface ActivityItem {
 
     .pipeline-stage {
       margin-bottom: 1.25rem;
+      animation: slideInRight 0.4s ease-out both;
     }
+
+    .pipeline-stage:nth-child(1) { animation-delay: 0.1s; }
+    .pipeline-stage:nth-child(2) { animation-delay: 0.2s; }
+    .pipeline-stage:nth-child(3) { animation-delay: 0.3s; }
+    .pipeline-stage:nth-child(4) { animation-delay: 0.4s; }
+    .pipeline-stage:nth-child(5) { animation-delay: 0.5s; }
 
     .pipeline-stage:last-child {
       margin-bottom: 0;
@@ -623,8 +713,8 @@ interface ActivityItem {
     }
 
     .stage-dot.created { background: var(--primary); }
-    .stage-dot.reserved { background: #3b82f6; }
-    .stage-dot.shipped { background: var(--warning); }
+    .stage-dot.reserved { background: var(--info); }
+    .stage-dot.shipped { background: var(--secondary); }
     .stage-dot.delivered { background: var(--success); }
     .stage-dot.canceled { background: var(--danger); }
 
@@ -650,12 +740,12 @@ interface ActivityItem {
     .stage-progress {
       height: 100%;
       border-radius: 4px;
-      transition: width 0.5s ease;
+      transition: width 0.8s ease;
     }
 
     .stage-progress.created { background: linear-gradient(90deg, var(--primary), var(--primary-light)); }
-    .stage-progress.reserved { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
-    .stage-progress.shipped { background: linear-gradient(90deg, var(--warning), #fbbf24); }
+    .stage-progress.reserved { background: linear-gradient(90deg, var(--info), #38bdf8); }
+    .stage-progress.shipped { background: linear-gradient(90deg, var(--secondary), var(--secondary-light)); }
     .stage-progress.delivered { background: linear-gradient(90deg, var(--success), #34d399); }
     .stage-progress.canceled { background: linear-gradient(90deg, var(--danger), #f87171); }
 
@@ -669,8 +759,14 @@ interface ActivityItem {
       align-items: center;
       gap: 1rem;
       padding: 0.875rem 1.5rem;
-      transition: background 0.2s;
+      transition: all 0.3s ease;
+      animation: slideInRight 0.4s ease-out both;
     }
+
+    .activity-item:nth-child(1) { animation-delay: 0.1s; }
+    .activity-item:nth-child(2) { animation-delay: 0.2s; }
+    .activity-item:nth-child(3) { animation-delay: 0.3s; }
+    .activity-item:nth-child(4) { animation-delay: 0.4s; }
 
     .activity-item:hover {
       background: var(--gray-50);
@@ -734,12 +830,21 @@ interface ActivityItem {
       border-radius: var(--radius-sm);
       text-decoration: none;
       background: var(--gray-50);
-      transition: all 0.2s;
+      transition: all 0.3s ease;
+      animation: fadeInUp 0.5s ease-out both;
     }
+
+    .quick-action:nth-child(1) { animation-delay: 0.1s; }
+    .quick-action:nth-child(2) { animation-delay: 0.15s; }
+    .quick-action:nth-child(3) { animation-delay: 0.2s; }
+    .quick-action:nth-child(4) { animation-delay: 0.25s; }
+    .quick-action:nth-child(5) { animation-delay: 0.3s; }
+    .quick-action:nth-child(6) { animation-delay: 0.35s; }
 
     .quick-action:hover {
       background: var(--gray-100);
-      transform: translateX(4px);
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
     }
 
     .action-icon-wrapper {
@@ -750,14 +855,19 @@ interface ActivityItem {
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
+      transition: transform 0.3s ease;
     }
 
-    .action-icon-wrapper.users { background: rgba(79, 70, 229, 0.1); color: var(--primary); }
+    .quick-action:hover .action-icon-wrapper {
+      transform: scale(1.1);
+    }
+
+    .action-icon-wrapper.users { background: rgba(0, 31, 63, 0.1); color: var(--primary); }
     .action-icon-wrapper.products { background: rgba(16, 185, 129, 0.1); color: var(--success); }
-    .action-icon-wrapper.warehouses { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
-    .action-icon-wrapper.suppliers { background: rgba(6, 182, 212, 0.1); color: var(--info); }
-    .action-icon-wrapper.purchases { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
-    .action-icon-wrapper.reporting { background: rgba(236, 72, 153, 0.1); color: #ec4899; }
+    .action-icon-wrapper.warehouses { background: rgba(255, 102, 0, 0.1); color: var(--secondary); }
+    .action-icon-wrapper.suppliers { background: rgba(14, 165, 233, 0.1); color: var(--info); }
+    .action-icon-wrapper.purchases { background: rgba(0, 51, 102, 0.1); color: var(--primary-light); }
+    .action-icon-wrapper.reporting { background: rgba(255, 133, 51, 0.1); color: var(--secondary-light); }
 
     .action-info {
       flex: 1;
@@ -780,11 +890,11 @@ interface ActivityItem {
     .action-arrow {
       color: var(--gray-300);
       flex-shrink: 0;
-      transition: transform 0.2s;
+      transition: all 0.3s ease;
     }
 
     .quick-action:hover .action-arrow {
-      color: var(--gray-500);
+      color: var(--secondary);
       transform: translateX(4px);
     }
 

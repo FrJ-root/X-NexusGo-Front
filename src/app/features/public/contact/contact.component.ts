@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -45,17 +45,29 @@ interface FAQ {
 
       <!-- Hero Section -->
       <section class="hero">
-        <div class="hero-bg"></div>
+        <div class="hero-bg">
+          <div class="hero-particles">
+            @for (i of [1,2,3,4,5,6,7,8]; track i) {
+              <div class="particle" [style.--delay]="(i * 0.8) + 's'" [style.--x]="(i * 12) + '%'"></div>
+            }
+          </div>
+          <div class="hero-shape shape-1"></div>
+          <div class="hero-shape shape-2"></div>
+        </div>
         <div class="container">
-          <div class="hero-content">
-            <span class="section-badge">Contact</span>
-            <h1 class="hero-title">
+          <div class="hero-content animate-hero">
+            <span class="section-badge animate-fade-in">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              Contact
+            </span>
+            <h1 class="hero-title animate-slide-up">
               Parlons de votre
               <span class="gradient-text">projet logistique</span>
             </h1>
-            <p class="hero-description">
-              Notre équipe est là pour répondre à toutes vos questions et vous accompagner 
-              dans l'optimisation de votre chaîne logistique.
+            <p class="hero-description animate-slide-up-delay">
+              Notre équipe d'experts est disponible pour répondre à toutes vos questions 
+              et vous accompagner dans l'optimisation de votre chaîne logistique. 
+              Réponse garantie sous 24h.
             </p>
           </div>
         </div>
@@ -66,7 +78,7 @@ interface FAQ {
         <div class="container">
           <div class="contact-grid">
             <!-- Contact Form -->
-            <div class="contact-form-wrapper">
+            <div class="contact-form-wrapper animate-on-scroll">
               <h2>Envoyez-nous un message</h2>
               <p>Remplissez le formulaire ci-dessous et nous vous répondrons dans les 24h.</p>
 
@@ -193,11 +205,11 @@ interface FAQ {
 
             <!-- Contact Info -->
             <div class="contact-info">
-              <div class="info-card">
+              <div class="info-card animate-on-scroll" style="--delay: 0.1s">
                 <h3>Informations de contact</h3>
                 <div class="info-list">
-                  @for (info of contactInfos; track info.title) {
-                    <div class="info-item">
+                  @for (info of contactInfos; track info.title; let i = $index) {
+                    <div class="info-item" [style.--delay]="(i * 0.1) + 's'">
                       <div class="info-icon">{{ info.icon }}</div>
                       <div class="info-content">
                         <span class="info-title">{{ info.title }}</span>
@@ -212,7 +224,7 @@ interface FAQ {
                 </div>
               </div>
 
-              <div class="hours-card">
+              <div class="hours-card animate-on-scroll" style="--delay: 0.2s">
                 <h3>Horaires d'ouverture</h3>
                 <div class="hours-list">
                   <div class="hours-item">
@@ -233,7 +245,7 @@ interface FAQ {
                 </p>
               </div>
 
-              <div class="social-card">
+              <div class="social-card animate-on-scroll" style="--delay: 0.3s">
                 <h3>Suivez-nous</h3>
                 <div class="social-links">
                   <a href="#" class="social-link twitter">
@@ -440,14 +452,55 @@ interface FAQ {
     }
 
     .section-badge {
-      display: inline-block;
-      background: rgba(79, 70, 229, 0.1);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: linear-gradient(135deg, rgba(0, 31, 63, 0.1) 0%, rgba(255, 102, 0, 0.1) 100%);
       color: var(--primary);
       padding: 0.5rem 1rem;
       border-radius: 50px;
       font-size: 0.875rem;
       font-weight: 600;
       margin-bottom: 1rem;
+      border: 1px solid rgba(0, 31, 63, 0.1);
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(50px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes particleFloat {
+      0%, 100% { transform: translateY(0); opacity: 0.4; }
+      50% { transform: translateY(-120px); opacity: 0.8; }
+    }
+
+    .animate-hero { animation: fadeIn 0.8s ease-out forwards; }
+    .animate-fade-in { animation: fadeIn 0.6s ease-out 0.2s both; }
+    .animate-slide-up { animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both; }
+    .animate-slide-up-delay { animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both; }
+
+    .animate-on-scroll {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      transition-delay: var(--delay, 0s);
+    }
+
+    .animate-on-scroll.visible {
+      opacity: 1;
+      transform: translateY(0);
     }
 
     /* Navigation */
@@ -513,13 +566,55 @@ interface FAQ {
       position: relative;
       padding: 10rem 1.5rem 6rem;
       text-align: center;
+      overflow: hidden;
     }
 
     .hero-bg {
       position: absolute;
       inset: 0;
-      background: linear-gradient(135deg, var(--gray-50) 0%, var(--white) 100%);
+      background: linear-gradient(135deg, var(--gray-50) 0%, var(--white) 50%, rgba(255, 102, 0, 0.03) 100%);
       z-index: -1;
+    }
+
+    .hero-particles {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: var(--secondary);
+      border-radius: 50%;
+      left: var(--x, 50%);
+      bottom: -20px;
+      animation: particleFloat 10s ease-in-out infinite;
+      animation-delay: var(--delay, 0s);
+    }
+
+    .hero-shape {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.3;
+    }
+
+    .hero-shape.shape-1 {
+      width: 500px;
+      height: 500px;
+      background: linear-gradient(135deg, rgba(0, 31, 63, 0.2) 0%, rgba(255, 102, 0, 0.1) 100%);
+      top: -200px;
+      right: -100px;
+    }
+
+    .hero-shape.shape-2 {
+      width: 400px;
+      height: 400px;
+      background: rgba(255, 102, 0, 0.15);
+      bottom: -150px;
+      left: -100px;
     }
 
     .hero-title {
@@ -535,6 +630,7 @@ interface FAQ {
       color: var(--gray-600);
       max-width: 600px;
       margin: 0 auto;
+      line-height: 1.7;
     }
 
     @media (max-width: 768px) {
@@ -974,7 +1070,7 @@ interface FAQ {
     }
   `]
 })
-export class ContactComponent {
+export class ContactComponent implements AfterViewInit {
   private fb = inject(FormBuilder);
 
   currentYear = new Date().getFullYear();
@@ -997,8 +1093,8 @@ export class ContactComponent {
     {
       icon: '📧',
       title: 'Email',
-      value: 'contact@logiflow.com',
-      link: 'mailto:contact@logiflow.com'
+      value: 'contact@x-nexusgo.com',
+      link: 'mailto:contact@x-nexusgo.com'
     },
     {
       icon: '📞',
@@ -1009,32 +1105,41 @@ export class ContactComponent {
     {
       icon: '📍',
       title: 'Adresse',
-      value: '123 Avenue de la Logistique, 75008 Paris'
+      value: '42 Avenue des Champs-Élysées, 75008 Paris, France'
+    },
+    {
+      icon: '🌍',
+      title: 'International',
+      value: 'London • Berlin • Amsterdam • New York'
     }
   ];
 
   faqs: FAQ[] = [
     {
-      question: 'Comment puis-je démarrer avec LogiFlow ?',
-      answer: 'C\'est très simple ! Créez un compte gratuit, importez vos produits et entrepôts, et commencez à gérer vos stocks immédiatement. Notre équipe est disponible pour vous accompagner dans la prise en main.'
+      question: 'Comment puis-je démarrer avec X-NexusGo ?',
+      answer: 'C\'est très simple ! Créez un compte gratuit, importez vos produits et entrepôts via CSV ou API, et commencez à gérer vos stocks immédiatement. Notre équipe d\'experts est disponible pour une session d\'onboarding personnalisée.'
     },
     {
       question: 'Quels modes de paiement acceptez-vous ?',
-      answer: 'Nous acceptons les cartes de crédit (Visa, Mastercard, American Express), les virements SEPA et PayPal. Pour les grandes entreprises, nous proposons également la facturation mensuelle.'
+      answer: 'Nous acceptons les cartes de crédit (Visa, Mastercard, American Express), les virements SEPA et PayPal. Pour les grandes entreprises, nous proposons également la facturation mensuelle ou trimestrielle avec des conditions personnalisées.'
     },
     {
       question: 'Y a-t-il une période d\'essai gratuite ?',
-      answer: 'Oui ! Vous bénéficiez de 30 jours d\'essai gratuit avec accès à toutes les fonctionnalités. Aucune carte de crédit n\'est requise pour démarrer.'
+      answer: 'Oui ! Vous bénéficiez de 30 jours d\'essai gratuit avec accès à toutes les fonctionnalités Premium. Aucune carte de crédit n\'est requise pour démarrer. À la fin de l\'essai, vous pouvez choisir le plan qui correspond à vos besoins.'
     },
     {
-      question: 'Puis-je intégrer LogiFlow avec mes outils existants ?',
-      answer: 'Absolument ! LogiFlow dispose d\'une API REST complète et s\'intègre avec les principaux outils e-commerce, comptables et de transport. Consultez notre documentation API pour plus de détails.'
+      question: 'Puis-je intégrer X-NexusGo avec mes outils existants ?',
+      answer: 'Absolument ! X-NexusGo dispose d\'une API REST complète et s\'intègre avec les principaux outils e-commerce (Shopify, WooCommerce, Magento), ERP (SAP, Oracle), comptables et transporteurs (DHL, FedEx, UPS). Consultez notre documentation API pour plus de détails.'
     },
     {
       question: 'Comment fonctionne le support technique ?',
-      answer: 'Nous offrons un support par email et chat pendant les heures ouvrées pour tous les clients. Les clients Premium bénéficient d\'un support téléphonique 24/7 et d\'un account manager dédié.'
+      answer: 'Nous offrons un support par email et chat en français et anglais pendant les heures ouvrées pour tous les clients. Les clients Premium bénéficient d\'un support téléphonique 24/7 et d\'un Customer Success Manager dédié pour garantir votre réussite.'
     }
   ];
+
+  ngAfterViewInit() {
+    this.initScrollAnimations();
+  }
 
   isFieldInvalid(fieldName: string): boolean {
     const field = this.contactForm.get(fieldName);
@@ -1062,5 +1167,24 @@ export class ContactComponent {
       this.submitSuccess.set(true);
       this.contactForm.reset();
     }, 1500);
+  }
+
+  private initScrollAnimations() {
+    if (typeof IntersectionObserver !== 'undefined') {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+            }
+          });
+        },
+        { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+      );
+
+      document.querySelectorAll('.animate-on-scroll').forEach(el => {
+        observer.observe(el);
+      });
+    }
   }
 }

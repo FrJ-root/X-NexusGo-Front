@@ -298,16 +298,18 @@ interface StockAlert {
   `,
   styles: [`
     :host {
-      --primary: #6366f1;
-      --primary-light: #818cf8;
+      --primary: #001f3f;
+      --primary-light: #003366;
+      --secondary: #ff6600;
+      --secondary-light: #ff8533;
       --success: #10b981;
       --success-light: #d1fae5;
       --warning: #f59e0b;
       --warning-light: #fef3c7;
       --danger: #ef4444;
       --danger-light: #fee2e2;
-      --info: #06b6d4;
-      --info-light: #cffafe;
+      --info: #0ea5e9;
+      --info-light: #e0f2fe;
       --gray-900: #111827;
       --gray-700: #374151;
       --gray-600: #4b5563;
@@ -324,14 +326,30 @@ interface StockAlert {
       --radius-sm: 10px;
     }
 
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate(-50%, -50%); }
+      50% { transform: translate(-50%, -60%); }
+    }
+
     .dashboard {
       max-width: 1300px;
       margin: 0 auto;
+      animation: fadeInUp 0.5s ease-out;
     }
 
     /* Header */
     .dashboard-header {
-      background: linear-gradient(135deg, var(--primary) 0%, #4f46e5 100%);
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
       border-radius: var(--radius);
       padding: 2rem;
       margin-bottom: 2rem;
@@ -341,6 +359,17 @@ interface StockAlert {
       position: relative;
       overflow: hidden;
       color: var(--white);
+    }
+
+    .dashboard-header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 300px;
+      height: 300px;
+      background: rgba(255, 102, 0, 0.1);
+      border-radius: 50%;
     }
 
     .header-content {
@@ -385,28 +414,29 @@ interface StockAlert {
       border-radius: var(--radius-sm);
       text-decoration: none;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.3s ease;
       border: none;
     }
 
     .btn-primary {
-      background: var(--white);
-      color: var(--primary);
+      background: linear-gradient(135deg, var(--secondary), var(--secondary-light));
+      color: var(--white);
     }
 
     .btn-primary:hover {
-      background: var(--gray-100);
-      transform: translateY(-1px);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 102, 0, 0.4);
     }
 
     .btn-outline {
-      background: transparent;
+      background: rgba(255, 255, 255, 0.15);
       color: var(--white);
-      border: 2px solid rgba(255, 255, 255, 0.5);
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      backdrop-filter: blur(4px);
     }
 
     .btn-outline:hover {
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.25);
       border-color: var(--white);
     }
 
@@ -424,6 +454,7 @@ interface StockAlert {
       transform: translate(-50%, -50%);
       font-size: 3.5rem;
       z-index: 2;
+      animation: float 3s ease-in-out infinite;
     }
 
     .visual-shapes {
@@ -438,7 +469,7 @@ interface StockAlert {
     }
 
     .shape-1 { width: 100%; height: 100%; }
-    .shape-2 { width: 70%; height: 70%; top: 15%; left: 15%; }
+    .shape-2 { width: 70%; height: 70%; top: 15%; left: 15%; background: rgba(255, 102, 0, 0.15); }
 
     @media (max-width: 768px) {
       .dashboard-header { flex-direction: column; text-align: center; }
@@ -463,6 +494,18 @@ interface StockAlert {
       border-radius: var(--radius-sm);
       padding: 1.25rem;
       box-shadow: var(--shadow);
+      transition: all 0.3s ease;
+      animation: fadeInUp 0.5s ease-out both;
+    }
+
+    .kpi-card:nth-child(1) { animation-delay: 0.1s; }
+    .kpi-card:nth-child(2) { animation-delay: 0.2s; }
+    .kpi-card:nth-child(3) { animation-delay: 0.3s; }
+    .kpi-card:nth-child(4) { animation-delay: 0.4s; }
+
+    .kpi-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
     }
 
     .kpi-header {
@@ -479,11 +522,16 @@ interface StockAlert {
       display: flex;
       align-items: center;
       justify-content: center;
+      transition: transform 0.3s ease;
     }
 
-    .icon-primary { background: rgba(99, 102, 241, 0.1); color: var(--primary); }
+    .kpi-card:hover .kpi-icon {
+      transform: scale(1.1);
+    }
+
+    .icon-primary { background: rgba(0, 31, 63, 0.1); color: var(--primary); }
     .icon-danger { background: var(--danger-light); color: var(--danger); }
-    .icon-warning { background: var(--warning-light); color: var(--warning); }
+    .icon-warning { background: rgba(255, 102, 0, 0.1); color: var(--secondary); }
     .icon-info { background: var(--info-light); color: var(--info); }
 
     .kpi-trend {
@@ -543,6 +591,12 @@ interface StockAlert {
       background: var(--white);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
+      transition: all 0.3s ease;
+      animation: fadeInUp 0.5s ease-out both;
+    }
+
+    .card:hover {
+      box-shadow: var(--shadow-md);
     }
 
     .card-header {
@@ -564,17 +618,21 @@ interface StockAlert {
     }
 
     .card-header h2 svg {
-      color: var(--gray-400);
+      color: var(--secondary);
     }
 
     .card-link {
       font-size: 0.8125rem;
-      color: var(--primary);
+      color: var(--secondary);
       text-decoration: none;
       font-weight: 500;
+      transition: color 0.2s;
     }
 
-    .card-link:hover { text-decoration: underline; }
+    .card-link:hover { 
+      color: var(--secondary-light);
+      text-decoration: underline; 
+    }
 
     .alert-count {
       font-size: 0.75rem;
@@ -607,11 +665,18 @@ interface StockAlert {
       padding: 1rem;
       border-radius: var(--radius-sm);
       text-decoration: none;
-      transition: all 0.2s;
+      transition: all 0.3s ease;
+      animation: slideInRight 0.4s ease-out both;
     }
+
+    .action-item:nth-child(1) { animation-delay: 0.1s; }
+    .action-item:nth-child(2) { animation-delay: 0.2s; }
+    .action-item:nth-child(3) { animation-delay: 0.3s; }
+    .action-item:nth-child(4) { animation-delay: 0.4s; }
 
     .action-item:hover {
       background: var(--gray-50);
+      transform: translateX(6px);
     }
 
     .action-icon-box {
@@ -622,12 +687,17 @@ interface StockAlert {
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
+      transition: transform 0.3s ease;
     }
 
-    .action-icon-box.inventory { background: rgba(99, 102, 241, 0.1); color: var(--primary); }
+    .action-item:hover .action-icon-box {
+      transform: scale(1.1);
+    }
+
+    .action-icon-box.inventory { background: rgba(0, 31, 63, 0.1); color: var(--primary); }
     .action-icon-box.movements { background: rgba(16, 185, 129, 0.1); color: var(--success); }
-    .action-icon-box.orders { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
-    .action-icon-box.shipments { background: rgba(6, 182, 212, 0.1); color: var(--info); }
+    .action-icon-box.orders { background: rgba(255, 102, 0, 0.1); color: var(--secondary); }
+    .action-icon-box.shipments { background: rgba(14, 165, 233, 0.1); color: var(--info); }
 
     .action-details { flex: 1; }
     .action-name { display: block; font-weight: 600; font-size: 0.9375rem; color: var(--gray-900); }
@@ -635,12 +705,12 @@ interface StockAlert {
 
     .action-chevron {
       color: var(--gray-300);
-      transition: transform 0.2s;
+      transition: all 0.3s ease;
     }
 
     .action-item:hover .action-chevron {
-      transform: translateX(3px);
-      color: var(--gray-400);
+      transform: translateX(4px);
+      color: var(--secondary);
     }
 
     /* Alerts List */
@@ -683,7 +753,7 @@ interface StockAlert {
       margin-bottom: 0.375rem;
     }
 
-    .stock-current { font-weight: 700; color: var(--warning); }
+    .stock-current { font-weight: 700; color: var(--secondary); }
     .stock-level.critical .stock-current { color: var(--danger); }
     .stock-divider { color: var(--gray-300); margin: 0 0.25rem; }
     .stock-min { color: var(--gray-500); }
@@ -699,9 +769,9 @@ interface StockAlert {
 
     .stock-fill {
       height: 100%;
-      background: var(--warning);
+      background: var(--secondary);
       border-radius: 3px;
-      transition: width 0.3s;
+      transition: width 0.5s ease;
     }
 
     .stock-fill.critical { background: var(--danger); }
@@ -777,9 +847,9 @@ interface StockAlert {
     }
 
     .status-badge.status-created { background: var(--gray-100); color: var(--gray-600); }
-    .status-badge.status-confirmed { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+    .status-badge.status-confirmed { background: rgba(0, 31, 63, 0.1); color: var(--primary); }
     .status-badge.status-reserved { background: var(--success-light); color: var(--success); }
-    .status-badge.status-partially_reserved { background: var(--warning-light); color: #b45309; }
+    .status-badge.status-partially_reserved { background: rgba(255, 102, 0, 0.1); color: var(--secondary); }
 
     .process-btn {
       display: inline-flex;
@@ -788,15 +858,16 @@ interface StockAlert {
       padding: 0.375rem 0.75rem;
       font-size: 0.8125rem;
       font-weight: 500;
-      color: var(--primary);
+      color: var(--secondary);
       text-decoration: none;
       border-radius: 6px;
-      background: rgba(99, 102, 241, 0.1);
-      transition: all 0.2s;
+      background: rgba(255, 102, 0, 0.1);
+      transition: all 0.3s ease;
     }
 
     .process-btn:hover {
-      background: rgba(99, 102, 241, 0.2);
+      background: rgba(255, 102, 0, 0.2);
+      transform: translateX(2px);
     }
 
     .empty-orders {

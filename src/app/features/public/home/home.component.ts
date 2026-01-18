@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, AfterViewInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -88,29 +88,37 @@ interface Stat {
       <!-- Hero Section -->
       <section class="hero">
         <div class="hero-bg">
+          <div class="hero-particles">
+            @for (i of [1,2,3,4,5,6,7,8,9,10,11,12]; track i) {
+              <div class="particle" [style.--delay]="(i * 0.7) + 's'" [style.--x]="(i * 8) + '%'" [style.--size]="(6 + (i % 3) * 4) + 'px'"></div>
+            }
+          </div>
           <div class="hero-shape shape-1"></div>
           <div class="hero-shape shape-2"></div>
           <div class="hero-shape shape-3"></div>
+          <div class="hero-grid-pattern"></div>
         </div>
         
-        <div class="hero-content">
-          <div class="hero-badge">
+        <div class="hero-content animate-hero">
+          <div class="hero-badge animate-fade-in">
+            <span class="badge-pulse"></span>
             <span class="badge-icon">🚀</span>
             <span>Solution logistique nouvelle génération</span>
           </div>
           
-          <h1 class="hero-title">
+          <h1 class="hero-title animate-slide-up">
             Gérez votre chaîne logistique avec
-            <span class="gradient-text">précision et efficacité</span>
+            <span class="gradient-text animated-gradient">précision et efficacité</span>
           </h1>
           
-          <p class="hero-description">
+          <p class="hero-description animate-slide-up-delay">
             X-NexusGo connecte votre supply chain mondiale avec précision et performance. 
-            Solutions de bout en bout pour une logistique sans frontières.
+            Solutions de bout en bout pour une logistique sans frontières, utilisée par 
+            <strong>plus de 500 entreprises</strong> dans <strong>45 pays</strong>.
           </p>
           
-          <div class="hero-actions">
-            <a routerLink="/register" class="btn btn-primary btn-lg">
+          <div class="hero-actions animate-slide-up-delay-2">
+            <a routerLink="/register" class="btn btn-primary btn-lg btn-glow">
               <span>Commencer gratuitement</span>
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
             </a>
@@ -120,19 +128,31 @@ interface Stat {
             </a>
           </div>
 
-          <div class="hero-stats">
-            @for (stat of heroStats; track stat.label) {
-              <div class="hero-stat">
+          <div class="hero-stats animate-slide-up-delay-3">
+            @for (stat of heroStats; track stat.label; let i = $index) {
+              <div class="hero-stat" [style.--delay]="(i * 0.1) + 's'">
                 <span class="stat-icon">{{ stat.icon }}</span>
-                <span class="stat-value">{{ stat.value }}</span>
+                <span class="stat-value counter" [attr.data-target]="stat.value">{{ stat.value }}</span>
                 <span class="stat-label">{{ stat.label }}</span>
               </div>
             }
           </div>
+
+          <div class="hero-clients animate-fade-in-delay">
+            <span class="clients-label">Ils nous font confiance</span>
+            <div class="clients-logos">
+              <span class="client-logo">🏢 DHL</span>
+              <span class="client-logo">📦 FedEx</span>
+              <span class="client-logo">🛒 Amazon</span>
+              <span class="client-logo">🛍️ Shopify</span>
+              <span class="client-logo">💼 SAP</span>
+            </div>
+          </div>
         </div>
 
-        <div class="hero-visual">
+        <div class="hero-visual animate-float">
           <div class="dashboard-preview">
+            <div class="preview-glow"></div>
             <div class="preview-header">
               <div class="preview-dots">
                 <span class="dot red"></span>
@@ -170,21 +190,28 @@ interface Stat {
       <!-- Features Section -->
       <section class="features-section" id="features">
         <div class="container">
-          <div class="section-header">
-            <span class="section-badge">Fonctionnalités</span>
+          <div class="section-header animate-on-scroll">
+            <span class="section-badge">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              Fonctionnalités
+            </span>
             <h2 class="section-title">
               Tout ce dont vous avez besoin pour
               <span class="gradient-text">optimiser votre logistique</span>
             </h2>
             <p class="section-description">
-              Une suite complète d'outils pour gérer efficacement vos opérations de bout en bout
+              Une suite complète d'outils professionnels pour gérer efficacement vos opérations 
+              de bout en bout, avec une visibilité totale sur votre supply chain.
             </p>
           </div>
 
           <div class="features-grid">
-            @for (feature of features; track feature.title) {
-              <div class="feature-card" [style.--accent-color]="feature.color">
-                <div class="feature-icon">{{ feature.icon }}</div>
+            @for (feature of features; track feature.title; let i = $index) {
+              <div class="feature-card animate-on-scroll" [style.--accent-color]="feature.color" [style.--delay]="(i * 0.1) + 's'">
+                <div class="feature-icon-wrapper">
+                  <div class="feature-icon">{{ feature.icon }}</div>
+                  <div class="feature-icon-glow"></div>
+                </div>
                 <h3 class="feature-title">{{ feature.title }}</h3>
                 <p class="feature-description">{{ feature.description }}</p>
                 <a class="feature-link">
@@ -700,41 +727,70 @@ interface Stat {
     .hero-bg {
       position: absolute;
       inset: 0;
-      background: linear-gradient(135deg, var(--gray-50) 0%, var(--white) 50%, rgba(79, 70, 229, 0.05) 100%);
+      background: linear-gradient(135deg, var(--gray-50) 0%, var(--white) 50%, rgba(255, 102, 0, 0.05) 100%);
       z-index: -1;
+      overflow: hidden;
+    }
+
+    .hero-particles {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      width: var(--size, 8px);
+      height: var(--size, 8px);
+      background: var(--secondary);
+      border-radius: 50%;
+      left: var(--x, 50%);
+      bottom: -20px;
+      animation: particleFloat 12s ease-in-out infinite;
+      animation-delay: var(--delay, 0s);
+    }
+
+    .hero-grid-pattern {
+      position: absolute;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(0, 31, 63, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 31, 63, 0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+      opacity: 0.5;
     }
 
     .hero-shape {
       position: absolute;
       border-radius: 50%;
-      filter: blur(60px);
-      opacity: 0.5;
+      filter: blur(80px);
+      opacity: 0.4;
     }
 
     .shape-1 {
-      width: 600px;
-      height: 600px;
-      background: rgba(79, 70, 229, 0.15);
-      top: -200px;
-      right: -100px;
+      width: 700px;
+      height: 700px;
+      background: linear-gradient(135deg, rgba(0, 31, 63, 0.2) 0%, rgba(255, 102, 0, 0.1) 100%);
+      top: -300px;
+      right: -200px;
       animation: float 20s ease-in-out infinite;
     }
 
     .shape-2 {
-      width: 400px;
-      height: 400px;
-      background: rgba(6, 182, 212, 0.15);
-      bottom: 0;
-      left: -100px;
+      width: 500px;
+      height: 500px;
+      background: linear-gradient(135deg, rgba(255, 102, 0, 0.15) 0%, rgba(0, 31, 63, 0.1) 100%);
+      bottom: -100px;
+      left: -150px;
       animation: float 15s ease-in-out infinite reverse;
     }
 
     .shape-3 {
-      width: 300px;
-      height: 300px;
-      background: rgba(245, 158, 11, 0.1);
-      top: 50%;
-      left: 50%;
+      width: 350px;
+      height: 350px;
+      background: rgba(16, 185, 129, 0.1);
+      top: 40%;
+      left: 40%;
       animation: float 18s ease-in-out infinite;
     }
 
@@ -747,6 +803,62 @@ interface Stat {
       }
     }
 
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(60px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes particleFloat {
+      0%, 100% { transform: translateY(0) scale(1); opacity: 0.4; }
+      50% { transform: translateY(-150px) scale(1.2); opacity: 0.8; }
+    }
+
+    @keyframes shimmer {
+      0% { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
+
+    @keyframes glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(255, 102, 0, 0.4); }
+      50% { box-shadow: 0 0 40px rgba(255, 102, 0, 0.6), 0 0 60px rgba(255, 102, 0, 0.3); }
+    }
+
+    @keyframes floatVisual {
+      0%, 100% { transform: translateY(-50%) perspective(1000px) rotateY(-10deg) rotateX(5deg); }
+      50% { transform: translateY(calc(-50% - 15px)) perspective(1000px) rotateY(-8deg) rotateX(3deg); }
+    }
+
+    .animate-hero { animation: fadeIn 0.8s ease-out forwards; }
+    .animate-fade-in { animation: fadeIn 0.6s ease-out 0.2s both; }
+    .animate-fade-in-delay { animation: fadeIn 0.6s ease-out 1s both; }
+    .animate-slide-up { animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both; }
+    .animate-slide-up-delay { animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both; }
+    .animate-slide-up-delay-2 { animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.7s both; }
+    .animate-slide-up-delay-3 { animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.9s both; }
+    .animate-float { animation: floatVisual 6s ease-in-out infinite; }
+
+    .animate-on-scroll {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      transition-delay: var(--delay, 0s);
+    }
+
+    .animate-on-scroll.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
     .hero-content {
       max-width: 700px;
       z-index: 1;
@@ -755,34 +867,64 @@ interface Stat {
     .hero-badge {
       display: inline-flex;
       align-items: center;
-      gap: 0.5rem;
-      background: var(--white);
-      border: 1px solid var(--gray-200);
-      padding: 0.5rem 1rem;
+      gap: 0.75rem;
+      background: linear-gradient(135deg, rgba(0, 31, 63, 0.08) 0%, rgba(255, 102, 0, 0.08) 100%);
+      border: 1px solid rgba(0, 31, 63, 0.1);
+      padding: 0.625rem 1.25rem;
       border-radius: 50px;
-      font-size: 0.875rem;
-      color: var(--gray-600);
+      font-size: 0.9rem;
+      color: var(--primary);
+      font-weight: 500;
       margin-bottom: 1.5rem;
       box-shadow: var(--shadow-sm);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .badge-pulse {
+      position: absolute;
+      left: 12px;
+      width: 8px;
+      height: 8px;
+      background: var(--secondary);
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
     }
 
     .badge-icon {
-      font-size: 1rem;
+      font-size: 1.1rem;
+      margin-left: 12px;
     }
 
     .hero-title {
-      font-size: 3.5rem;
+      font-size: 3.75rem;
       font-weight: 800;
-      line-height: 1.1;
+      line-height: 1.08;
       color: var(--gray-900);
       margin-bottom: 1.5rem;
+      letter-spacing: -0.02em;
+    }
+
+    .animated-gradient {
+      background: linear-gradient(135deg, var(--primary), var(--secondary), var(--primary));
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 4s linear infinite;
     }
 
     .hero-description {
       font-size: 1.25rem;
       color: var(--gray-600);
-      margin-bottom: 2rem;
-      max-width: 560px;
+      margin-bottom: 2.5rem;
+      max-width: 580px;
+      line-height: 1.7;
+    }
+
+    .hero-description strong {
+      color: var(--primary);
+      font-weight: 600;
     }
 
     .hero-actions {
@@ -792,15 +934,39 @@ interface Stat {
       flex-wrap: wrap;
     }
 
+    .btn-glow {
+      position: relative;
+      animation: glow 3s ease-in-out infinite;
+    }
+
+    .btn-glow::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      background: var(--gradient);
+      border-radius: inherit;
+      filter: blur(10px);
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: -1;
+    }
+
+    .btn-glow:hover::before {
+      opacity: 0.5;
+    }
+
     .hero-stats {
       display: flex;
       gap: 3rem;
+      margin-bottom: 3rem;
     }
 
     .hero-stat {
       display: flex;
       flex-direction: column;
       align-items: flex-start;
+      animation: fadeInUp 0.6s ease-out both;
+      animation-delay: var(--delay, 0s);
     }
 
     .stat-icon {
@@ -809,14 +975,51 @@ interface Stat {
     }
 
     .stat-value {
-      font-size: 1.75rem;
-      font-weight: 700;
-      color: var(--gray-900);
+      font-size: 2rem;
+      font-weight: 800;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
     .stat-label {
-      font-size: 0.875rem;
+      font-size: 0.9rem;
       color: var(--gray-500);
+      font-weight: 500;
+    }
+
+    .hero-clients {
+      padding-top: 2rem;
+      border-top: 1px solid var(--gray-200);
+    }
+
+    .clients-label {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--gray-500);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 1rem;
+      font-weight: 600;
+    }
+
+    .clients-logos {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .client-logo {
+      font-size: 0.9rem;
+      color: var(--gray-400);
+      opacity: 0.7;
+      transition: all 0.3s;
+    }
+
+    .client-logo:hover {
+      opacity: 1;
+      color: var(--gray-600);
     }
 
     .hero-visual {
@@ -825,23 +1028,31 @@ interface Stat {
       top: 50%;
       transform: translateY(-50%);
       width: 55%;
-      max-width: 700px;
+      max-width: 750px;
       z-index: 0;
     }
 
     .dashboard-preview {
+      position: relative;
       background: var(--white);
       border-radius: var(--radius-xl);
-      box-shadow: var(--shadow-xl);
+      box-shadow: 0 25px 50px -12px rgba(0, 31, 63, 0.25);
       overflow: hidden;
       border: 1px solid var(--gray-200);
-      transform: perspective(1000px) rotateY(-10deg) rotateX(5deg);
-      transition: transform 0.3s ease;
     }
 
-    .dashboard-preview:hover {
-      transform: perspective(1000px) rotateY(-5deg) rotateX(2deg);
+    .preview-glow {
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: conic-gradient(from 0deg, transparent, rgba(255, 102, 0, 0.1), transparent, rgba(0, 31, 63, 0.1), transparent);
+      animation: spin 8s linear infinite;
+      z-index: -1;
     }
+
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
     .preview-header {
       display: flex;
@@ -1010,26 +1221,31 @@ interface Stat {
     }
 
     .section-badge {
-      display: inline-block;
-      background: rgba(79, 70, 229, 0.1);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: linear-gradient(135deg, rgba(0, 31, 63, 0.1) 0%, rgba(255, 102, 0, 0.1) 100%);
       color: var(--primary);
       padding: 0.5rem 1rem;
       border-radius: 50px;
       font-size: 0.875rem;
       font-weight: 600;
       margin-bottom: 1rem;
+      border: 1px solid rgba(0, 31, 63, 0.1);
     }
 
     .section-title {
-      font-size: 2.5rem;
+      font-size: 2.75rem;
       font-weight: 700;
       color: var(--gray-900);
       margin-bottom: 1rem;
+      letter-spacing: -0.01em;
     }
 
     .section-description {
       font-size: 1.125rem;
       color: var(--gray-600);
+      line-height: 1.7;
     }
 
     @media (max-width: 768px) {
@@ -1055,10 +1271,10 @@ interface Stat {
 
     .feature-card {
       background: var(--white);
-      padding: 2rem;
+      padding: 2.25rem;
       border-radius: var(--radius-lg);
       border: 1px solid var(--gray-200);
-      transition: all 0.3s ease;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
       position: relative;
       overflow: hidden;
     }
@@ -1072,26 +1288,55 @@ interface Stat {
       height: 4px;
       background: var(--accent-color, var(--primary));
       transform: scaleX(0);
-      transition: transform 0.3s ease;
+      transform-origin: left;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .feature-card:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--shadow-lg);
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(0, 31, 63, 0.15);
+      border-color: transparent;
     }
 
     .feature-card:hover::before {
       transform: scaleX(1);
     }
 
+    .feature-icon-wrapper {
+      position: relative;
+      display: inline-block;
+      margin-bottom: 1.25rem;
+    }
+
     .feature-icon {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
+      font-size: 2.75rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .feature-icon-glow {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 60px;
+      height: 60px;
+      background: var(--accent-color, var(--primary));
+      opacity: 0.1;
+      border-radius: 50%;
+      filter: blur(15px);
+      transition: all 0.3s;
+    }
+
+    .feature-card:hover .feature-icon-glow {
+      width: 80px;
+      height: 80px;
+      opacity: 0.2;
     }
 
     .feature-title {
       font-size: 1.25rem;
-      font-weight: 600;
+      font-weight: 700;
       color: var(--gray-900);
       margin-bottom: 0.75rem;
     }
@@ -1579,7 +1824,7 @@ interface Stat {
     }
   `]
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, AfterViewInit {
   private authService = inject(AuthService);
   private router = inject(Router);
 
@@ -1588,46 +1833,47 @@ export class HomeComponent implements OnInit {
   currentYear = new Date().getFullYear();
 
   heroStats: Stat[] = [
-    { value: '10K+', label: 'Entreprises', icon: '🏢' },
+    { value: '500+', label: 'Entreprises actives', icon: '🏢' },
+    { value: '2M+', label: 'Commandes traitées', icon: '📦' },
     { value: '99.9%', label: 'Disponibilité', icon: '⚡' },
-    { value: '24/7', label: 'Support', icon: '🛟' }
+    { value: '24/7', label: 'Support dédié', icon: '🛟' }
   ];
 
   features: Feature[] = [
     {
       icon: '📦',
       title: 'Gestion des stocks',
-      description: 'Suivez vos inventaires en temps réel avec une précision absolue. Multi-entrepôts, alertes de rupture et traçabilité complète.',
+      description: 'Suivez vos inventaires en temps réel avec une précision absolue. Multi-entrepôts, alertes de rupture automatiques et traçabilité complète des lots.',
       color: '#001f3f'
     },
     {
       icon: '🚚',
       title: 'Expéditions & Tracking',
-      description: 'Gérez vos expéditions du picking à la livraison. Intégration transporteurs et suivi en temps réel.',
+      description: 'Gérez vos expéditions du picking à la livraison. Intégration avec DHL, FedEx, UPS et suivi GPS en temps réel pour vos clients.',
       color: '#ff6600'
     },
     {
       icon: '📋',
       title: 'Commandes clients',
-      description: 'Centralisez toutes vos commandes. Réservation automatique, gestion des backorders et workflow optimisé.',
+      description: 'Centralisez toutes vos commandes multicanal. Réservation automatique, gestion des backorders et workflow de validation optimisé.',
       color: '#10b981'
     },
     {
       icon: '🏭',
       title: 'Multi-entrepôts',
-      description: 'Gérez plusieurs sites de stockage avec allocation intelligente et transferts inter-entrepôts.',
+      description: 'Gérez plusieurs sites de stockage avec allocation intelligente basée sur la proximité et transferts inter-entrepôts automatisés.',
       color: '#003366'
     },
     {
       icon: '📊',
-      title: 'Reporting avancé',
-      description: 'Tableaux de bord personnalisables, KPIs en temps réel et rapports automatisés.',
+      title: 'Analytics avancés',
+      description: 'Tableaux de bord personnalisables, KPIs en temps réel, prévisions de demande par IA et rapports automatisés.',
       color: '#ff8533'
     },
     {
       icon: '🔗',
       title: 'Approvisionnements',
-      description: 'Gérez vos fournisseurs et bons de commande. Réception partielle et traçabilité complète.',
+      description: 'Gérez vos fournisseurs et bons de commande. Alertes de réapprovisionnement, réception partielle et scoring fournisseurs.',
       color: '#001f3f'
     }
   ];
@@ -1637,27 +1883,31 @@ export class HomeComponent implements OnInit {
       name: 'Marie Dupont',
       role: 'Directrice Supply Chain',
       company: 'GlobalTech Industries',
-      text: 'X-NexusGo a transformé notre chaîne logistique. Nous avons réduit nos coûts de 35% et amélioré notre réactivité globale.',
+      text: 'X-NexusGo a révolutionné notre chaîne logistique. Nous avons réduit nos coûts opérationnels de 35% et notre taux de rupture de stock est passé de 12% à moins de 2%.',
       avatar: '👩‍💼'
     },
     {
       name: 'Pierre Martin',
       role: 'Directeur Opérations',
       company: 'FastShip International',
-      text: 'La visibilité mondiale sur nos opérations nous permet de prendre des décisions stratégiques en temps réel.',
+      text: 'La visibilité mondiale sur nos 12 entrepôts nous permet de prendre des décisions stratégiques en temps réel. L\'intégration avec nos transporteurs est parfaite.',
       avatar: '👨‍💼'
     },
     {
       name: 'Sophie Bernard',
       role: 'CEO',
       company: 'EcoRetail Europe',
-      text: 'X-NexusGo est devenu indispensable. Solutions scalables, support réactif et résultats mesurables.',
+      text: 'Après 18 mois d\'utilisation, X-NexusGo est devenu indispensable. Le ROI a été atteint en 6 mois grâce aux gains d\'efficacité sur la préparation de commandes.',
       avatar: '👩‍💻'
     }
   ];
 
   ngOnInit() {
     this.isLoggedIn.set(this.authService.isAuthenticated());
+  }
+
+  ngAfterViewInit() {
+    this.initScrollAnimations();
   }
 
   toggleMobileMenu() {
@@ -1678,6 +1928,25 @@ export class HomeComponent implements OnInit {
         break;
       default:
         this.router.navigate(['/login']);
+    }
+  }
+
+  private initScrollAnimations() {
+    if (typeof IntersectionObserver !== 'undefined') {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+            }
+          });
+        },
+        { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+      );
+
+      document.querySelectorAll('.animate-on-scroll').forEach(el => {
+        observer.observe(el);
+      });
     }
   }
 }
