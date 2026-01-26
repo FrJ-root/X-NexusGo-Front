@@ -16,7 +16,12 @@ export class TokenService {
   }
 
   getAccessToken(): string | null {
-    return localStorage.getItem(this.ACCESS_KEY);
+    const token = localStorage.getItem(this.ACCESS_KEY);
+    // Check if token is expired
+    if (token && this.isTokenExpired(token)) {
+      return null; // Return null if expired, will trigger re-auth
+    }
+    return token;
   }
 
   getRefreshToken(): string | null {
@@ -28,14 +33,26 @@ export class TokenService {
     localStorage.removeItem(this.REFRESH_KEY);
   }
 
+  isTokenExpired(token: string): boolean {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      if (!payload.exp) return false;
+      // Check if token expires in less than 30 seconds
+      const expiresAt = payload.exp * 1000;
+      return Date.now() >= expiresAt - 30000;
+    } catch {
+      return true; // If we can't decode, consider it expired
+    }
+  }
+
   getUserRoles(): string[] {
-      const token = this.getAccessToken();
+      const token = localStorage.getItem(this.ACCESS_KEY);
       if (!token) return [];
 
       try {
         const payload = JSON.parse(atob(token.split('.')[1]));
 
-        if (payload.realm_access && payload.realm_access.roles) {
+        if (payload.realm_access?.roles) {
           return payload.realm_access.roles;
         }
 

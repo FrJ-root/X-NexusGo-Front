@@ -10,7 +10,8 @@ export interface CreateSalesOrderRequest {
 }
 
 export interface CreateSalesOrderLineRequest {
-  productId: number;
+  productId?: number;
+  productSku?: string;
   quantity: number;
 }
 
@@ -58,11 +59,12 @@ export class SalesOrdersApiService {
     return this.http.get<Page<SalesOrder>>(`${this.baseUrl}/status/${status}`, { params });
   }
 
-  getMyOrders(request?: PageRequest): Observable<Page<SalesOrder>> {
+  getMyOrders(request?: PageRequest & { status?: OrderStatus }): Observable<Page<SalesOrder>> {
     let params = new HttpParams();
     if (request?.page !== undefined) params = params.set('page', request.page);
     if (request?.size !== undefined) params = params.set('size', request.size);
     if (request?.sort) params = params.set('sort', request.sort);
+    if (request?.status) params = params.set('status', request.status);
     return this.http.get<Page<SalesOrder>>(`${this.baseUrl}/my-orders`, { params });
   }
 

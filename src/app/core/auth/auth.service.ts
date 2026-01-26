@@ -27,6 +27,11 @@ export class AuthService {
   
   currentUser = signal<User | null>(null);
 
+  constructor() {
+    // Load user from token on app startup
+    this.loadCurrentUser();
+  }
+
   login(credentials: LoginRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.API_URL}/authenticate`, credentials)
       .pipe(

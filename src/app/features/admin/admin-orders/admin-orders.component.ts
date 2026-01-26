@@ -243,7 +243,7 @@ export class AdminOrdersComponent implements OnInit {
   ];
 
   actions: TableAction[] = [
-    { icon: '👁️', label: 'Détail', action: 'view', variant: 'primary' }
+    { icon: '⦿', label: 'Détail', action: 'view', variant: 'primary' }
   ];
 
   filterFields: FilterField[] = [

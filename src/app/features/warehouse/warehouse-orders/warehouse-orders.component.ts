@@ -227,7 +227,7 @@ export class WarehouseOrdersComponent implements OnInit {
   ];
 
   actions: TableAction[] = [
-    { icon: '👁️', label: 'Traiter', action: 'view', variant: 'primary' }
+    { icon: '⦿', label: 'Traiter', action: 'view', variant: 'primary' }
   ];
 
   filterFields: FilterField[] = [

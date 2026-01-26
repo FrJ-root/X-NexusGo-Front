@@ -369,14 +369,14 @@ export class AdminUsersComponent implements OnInit {
   ];
 
   actions: TableAction[] = [
-    { icon: '✏️', label: 'Modifier', action: 'edit', variant: 'primary' },
+    { icon: '✎', label: 'Modifier', action: 'edit', variant: 'primary' },
     { 
       icon: '🔄', 
       label: 'Activer/Désactiver', 
       action: 'toggle', 
       variant: 'warning' 
     },
-    { icon: '🗑️', label: 'Supprimer', action: 'delete', variant: 'danger' }
+    { icon: '✕', label: 'Supprimer', action: 'delete', variant: 'danger' }
   ];
 
   filterFields: FilterField[] = [

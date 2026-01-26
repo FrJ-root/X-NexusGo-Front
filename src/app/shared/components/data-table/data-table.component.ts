@@ -92,7 +92,7 @@ export interface SortEvent {
                       } @else if (col.template === 'datetime') {
                         {{ getNestedValue(row, col.key) | date:'dd/MM/yyyy HH:mm' }}
                       } @else if (col.template === 'currency') {
-                        {{ getNestedValue(row, col.key) | number:'1.2-2' }} €
+                        {{ (getNestedValue(row, col.key) ?? 0) | number:'1.2-2' }} €
                       } @else if (col.format) {
                         {{ col.format(getNestedValue(row, col.key), row) }}
                       } @else {
@@ -297,34 +297,95 @@ export interface SortEvent {
     }
 
     .actions-col {
-      width: 120px;
+      width: 140px;
       text-align: center !important;
     }
 
     .actions-cell {
       text-align: center;
       white-space: nowrap;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
     }
 
     .action-btn {
-      width: 32px;
-      height: 32px;
-      border: none;
-      border-radius: 6px;
+      width: 36px;
+      height: 36px;
+      border: 1px solid transparent;
+      border-radius: 10px;
       cursor: pointer;
-      margin: 0 0.125rem;
-      font-size: 0.875rem;
-      transition: all 0.2s;
+      font-size: 1rem;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
     }
 
-    .action-primary { background: #eff6ff; color: #2563eb; }
-    .action-primary:hover { background: #dbeafe; }
-    .action-danger { background: #fef2f2; color: #dc2626; }
-    .action-danger:hover { background: #fee2e2; }
-    .action-warning { background: #fffbeb; color: #d97706; }
-    .action-warning:hover { background: #fef3c7; }
-    .action-success { background: #f0fdf4; color: #16a34a; }
-    .action-success:hover { background: #dcfce7; }
+    .action-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: currentColor;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .action-btn:hover::before {
+      opacity: 0.1;
+    }
+
+    .action-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .action-btn:active {
+      transform: translateY(0);
+    }
+
+    .action-primary { 
+      background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); 
+      color: #2563eb; 
+      border-color: #bfdbfe;
+    }
+    .action-primary:hover { 
+      background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); 
+      border-color: #93c5fd;
+    }
+    .action-danger { 
+      background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); 
+      color: #dc2626; 
+      border-color: #fecaca;
+    }
+    .action-danger:hover { 
+      background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); 
+      border-color: #fca5a5;
+    }
+    .action-warning { 
+      background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); 
+      color: #d97706; 
+      border-color: #fde68a;
+    }
+    .action-warning:hover { 
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); 
+      border-color: #fcd34d;
+    }
+    .action-success { 
+      background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); 
+      color: #16a34a; 
+      border-color: #bbf7d0;
+    }
+    .action-success:hover { 
+      background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); 
+      border-color: #86efac;
+    }
 
     .pagination {
       display: flex;

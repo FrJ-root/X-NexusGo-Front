@@ -170,9 +170,9 @@ export class AdminSuppliersComponent implements OnInit {
   ];
 
   actions: TableAction[] = [
-    { icon: '✏️', label: 'Modifier', action: 'edit', variant: 'primary' },
-    { icon: '📋', label: 'Voir les PO', action: 'viewPOs', variant: 'success' },
-    { icon: '🗑️', label: 'Supprimer', action: 'delete', variant: 'danger' }
+    { icon: '✎', label: 'Modifier', action: 'edit', variant: 'primary' },
+    { icon: '☰', label: 'Voir les PO', action: 'viewPOs', variant: 'success' },
+    { icon: '✕', label: 'Supprimer', action: 'delete', variant: 'danger' }
   ];
 
   filterFields: FilterField[] = [

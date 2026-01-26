@@ -232,11 +232,13 @@ export interface PageRequest {
 
 // API Error Response
 export interface ApiError {
-  timestamp: string;
-  status: number;
-  message: string;
-  path: string;
+  timestamp?: string;
+  status?: number;
+  message?: string;
+  error?: string;  // Backend returns { "error": "..." }
+  path?: string;
   detail?: string;
+  errors?: string[];  // Validation errors array
 }
 
 // Dashboard Stats

@@ -267,7 +267,7 @@ export class WarehouseShipmentsComponent implements OnInit {
   ];
 
   actions: TableAction[] = [
-    { icon: '✏️', label: 'Statut', action: 'status', variant: 'primary' }
+    { icon: '✎', label: 'Statut', action: 'status', variant: 'primary' }
   ];
 
   filterFields: FilterField[] = [

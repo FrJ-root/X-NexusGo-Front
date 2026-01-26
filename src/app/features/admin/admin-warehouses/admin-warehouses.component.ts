@@ -154,8 +154,8 @@ export class AdminWarehousesComponent implements OnInit {
   ];
 
   actions: TableAction[] = [
-    { icon: '✏️', label: 'Modifier', action: 'edit', variant: 'primary' },
-    { icon: '🗑️', label: 'Supprimer', action: 'delete', variant: 'danger' }
+    { icon: '✎', label: 'Modifier', action: 'edit', variant: 'primary' },
+    { icon: '✕', label: 'Supprimer', action: 'delete', variant: 'danger' }
   ];
 
   ngOnInit(): void {
