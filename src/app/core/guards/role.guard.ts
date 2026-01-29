@@ -1,22 +1,19 @@
 import { CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
-import { TokenService } from '../auth/token.service';
+import { AuthService } from '../auth/auth.service';
+import { Role } from '../../shared/models/auth.models';
 
 export const roleGuard: CanActivateFn = (route, state) => {
-  const tokenService = inject(TokenService);
+  const authService = inject(AuthService);
   const router = inject(Router);
+  const userRoles = authService.getUserRole();
 
-  const expectedRoles: string[] = route.data['roles'] || [];
+  const requiredRoles = route.data['roles'] as Role[];
 
-  const userRoles = tokenService.getUserRoles();
-
-  const hasRole = userRoles.some(role => expectedRoles.includes(role));
-
-  if (hasRole) {
+  if (requiredRoles && requiredRoles.some(role => userRoles.includes(role))) {
     return true;
   }
 
-  alert('Accès interdit : Rôle insuffisant');
-  router.navigate(['/login']);
+  router.navigate(['/unauthorized']);
   return false;
 };

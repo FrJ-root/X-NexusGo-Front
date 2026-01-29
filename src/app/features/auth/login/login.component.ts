@@ -44,10 +44,10 @@ import { Role } from '../../../shared/models/auth.models';
                     <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
                     <polyline points="22,6 12,13 2,6"></polyline>
                   </svg>
-                  <input 
-                    id="email" 
-                    type="email" 
-                    formControlName="email" 
+                  <input
+                    id="email"
+                    type="email"
+                    formControlName="email"
                     placeholder="vous@exemple.com"
                     [class.invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
                   >
@@ -64,10 +64,10 @@ import { Role } from '../../../shared/models/auth.models';
                     <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                     <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                   </svg>
-                  <input 
-                    id="password" 
-                    type="password" 
-                    formControlName="password" 
+                  <input
+                    id="password"
+                    type="password"
+                    formControlName="password"
                     placeholder="••••••••"
                     [class.invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
                   >
@@ -133,7 +133,7 @@ import { Role } from '../../../shared/models/auth.models';
             </div>
 
             <p class="switch-auth">
-              Pas encore de compte ? 
+              Pas encore de compte ?
               <a routerLink="/register">Créer un compte gratuitement</a>
             </p>
           </div>
@@ -143,7 +143,7 @@ import { Role } from '../../../shared/models/auth.models';
       <!-- Right Side - Promo -->
       <div class="auth-right">
         <div class="promo-overlay"></div>
-        
+
         <!-- Animated particles -->
         <div class="particles">
           @for (i of [1,2,3,4,5,6,7,8,9,10,11,12]; track i) {
@@ -954,13 +954,11 @@ export class LoginComponent {
   });
 
   onSubmit() {
-    if (this.loginForm.invalid) return;
+    if (this.loginForm.valid) {
+      const loginData = this.loginForm.value as LoginRequest; // <--- Add "as LoginRequest"
 
-    this.isLoading = true;
-    this.errorMessage = '';
-
-    this.authService.login(this.loginForm.value).subscribe({
-      next: () => {
+      this.authService.login(loginData).subscribe({
+        next: () => {
         const roles = this.tokenService.getUserRoles();
 
         console.log('Rôles détectés :', roles);
@@ -975,7 +973,7 @@ export class LoginComponent {
           this.router.navigate(['/login']);
         }
       },
-      error: (err) => {
+      error: (err: any) => {
         this.isLoading = false;
         if (err.status === 403 || err.status === 401) {
           this.errorMessage = 'Identifiants incorrects.';

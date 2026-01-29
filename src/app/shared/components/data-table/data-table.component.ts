@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Page } from '../../models';
+import { Page } from '../../models/page.model';
 
 export interface TableColumn {
   key: string;
@@ -37,7 +37,7 @@ export interface SortEvent {
           <thead>
             <tr>
               @for (col of columns; track col.key) {
-                <th 
+                <th
                   [style.width]="col.width"
                   [style.text-align]="col.align || 'left'"
                   [class.sortable]="col.sortable"
@@ -104,7 +104,7 @@ export interface SortEvent {
                     <td class="actions-cell">
                       @for (action of actions; track action.action) {
                         @if (!action.show || action.show(row)) {
-                          <button 
+                          <button
                             class="action-btn action-{{ action.variant || 'primary' }}"
                             [title]="action.label"
                             (click)="onAction(action.action, row, $event)"
@@ -128,23 +128,23 @@ export interface SortEvent {
             Affichage {{ startIndex + 1 }} - {{ endIndex }} sur {{ totalElements }}
           </div>
           <div class="pagination-controls">
-            <button 
-              class="page-btn" 
+            <button
+              class="page-btn"
               [disabled]="currentPage === 0"
               (click)="onPageChange(0)"
             >
               ««
             </button>
-            <button 
-              class="page-btn" 
+            <button
+              class="page-btn"
               [disabled]="currentPage === 0"
               (click)="onPageChange(currentPage - 1)"
             >
               «
             </button>
-            
+
             @for (page of visiblePages; track page) {
-              <button 
+              <button
                 class="page-btn"
                 [class.active]="page === currentPage"
                 (click)="onPageChange(page)"
@@ -153,15 +153,15 @@ export interface SortEvent {
               </button>
             }
 
-            <button 
-              class="page-btn" 
+            <button
+              class="page-btn"
               [disabled]="currentPage === totalPages - 1"
               (click)="onPageChange(currentPage + 1)"
             >
               »
             </button>
-            <button 
-              class="page-btn" 
+            <button
+              class="page-btn"
               [disabled]="currentPage === totalPages - 1"
               (click)="onPageChange(totalPages - 1)"
             >
@@ -350,40 +350,40 @@ export interface SortEvent {
       transform: translateY(0);
     }
 
-    .action-primary { 
-      background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); 
-      color: #2563eb; 
+    .action-primary {
+      background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+      color: #2563eb;
       border-color: #bfdbfe;
     }
-    .action-primary:hover { 
-      background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); 
+    .action-primary:hover {
+      background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
       border-color: #93c5fd;
     }
-    .action-danger { 
-      background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); 
-      color: #dc2626; 
+    .action-danger {
+      background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+      color: #dc2626;
       border-color: #fecaca;
     }
-    .action-danger:hover { 
-      background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); 
+    .action-danger:hover {
+      background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
       border-color: #fca5a5;
     }
-    .action-warning { 
-      background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); 
-      color: #d97706; 
+    .action-warning {
+      background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+      color: #d97706;
       border-color: #fde68a;
     }
-    .action-warning:hover { 
-      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); 
+    .action-warning:hover {
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
       border-color: #fcd34d;
     }
-    .action-success { 
-      background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); 
-      color: #16a34a; 
+    .action-success {
+      background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+      color: #16a34a;
       border-color: #bbf7d0;
     }
-    .action-success:hover { 
-      background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); 
+    .action-success:hover {
+      background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
       border-color: #86efac;
     }
 

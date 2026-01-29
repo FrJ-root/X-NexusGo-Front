@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
 import { AuthService } from '../../../core/auth/auth.service';
 import { Role } from '../../../shared/models/auth.models';
+import { Role } from '../../../shared/models/auth.models';
 
 interface Feature {
   icon: string;
@@ -38,7 +39,7 @@ interface Stat {
             <svg class="logo-icon" viewBox="0 0 32 32" width="32" height="32"><rect width="32" height="32" rx="6" fill="#001f3f"/><path d="M8 22 L16 10 L24 22" stroke="#ff6600" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="16" cy="18" r="3" fill="#ff6600"/></svg>
             <span class="logo-text">X-NexusGo</span>
           </a>
-          
+
           <div class="nav-links">
             <a routerLink="/" class="nav-link active">Accueil</a>
             <a routerLink="/features" class="nav-link">Fonctionnalités</a>
@@ -98,25 +99,25 @@ interface Stat {
           <div class="hero-shape shape-3"></div>
           <div class="hero-grid-pattern"></div>
         </div>
-        
+
         <div class="hero-content animate-hero">
           <div class="hero-badge animate-fade-in">
             <span class="badge-pulse"></span>
             <span class="badge-icon">🚀</span>
             <span>Solution logistique nouvelle génération</span>
           </div>
-          
+
           <h1 class="hero-title animate-slide-up">
             Gérez votre chaîne logistique avec
             <span class="gradient-text animated-gradient">précision et efficacité</span>
           </h1>
-          
+
           <p class="hero-description animate-slide-up-delay">
-            X-NexusGo connecte votre supply chain mondiale avec précision et performance. 
-            Solutions de bout en bout pour une logistique sans frontières, utilisée par 
+            X-NexusGo connecte votre supply chain mondiale avec précision et performance.
+            Solutions de bout en bout pour une logistique sans frontières, utilisée par
             <strong>plus de 500 entreprises</strong> dans <strong>45 pays</strong>.
           </p>
-          
+
           <div class="hero-actions animate-slide-up-delay-2">
             <a routerLink="/register" class="btn btn-primary btn-lg btn-glow">
               <span>Commencer gratuitement</span>
@@ -200,7 +201,7 @@ interface Stat {
               <span class="gradient-text">optimiser votre logistique</span>
             </h2>
             <p class="section-description">
-              Une suite complète d'outils professionnels pour gérer efficacement vos opérations 
+              Une suite complète d'outils professionnels pour gérer efficacement vos opérations
               de bout en bout, avec une visibilité totale sur votre supply chain.
             </p>
           </div>
@@ -241,9 +242,9 @@ interface Stat {
               </div>
               <div class="step-icon">👤</div>
             </div>
-            
+
             <div class="step-connector"></div>
-            
+
             <div class="step">
               <div class="step-number">2</div>
               <div class="step-content">
@@ -252,9 +253,9 @@ interface Stat {
               </div>
               <div class="step-icon">📊</div>
             </div>
-            
+
             <div class="step-connector"></div>
-            
+
             <div class="step">
               <div class="step-number">3</div>
               <div class="step-content">
@@ -387,7 +388,7 @@ interface Stat {
                 <span class="logo-text">X-NexusGo</span>
               </a>
               <p class="footer-description">
-                Solutions logistiques globales de bout en bout. 
+                Solutions logistiques globales de bout en bout.
                 Delivering results for industry leaders.
               </p>
               <div class="social-links">
@@ -753,7 +754,7 @@ interface Stat {
     .hero-grid-pattern {
       position: absolute;
       inset: 0;
-      background-image: 
+      background-image:
         linear-gradient(rgba(0, 31, 63, 0.03) 1px, transparent 1px),
         linear-gradient(90deg, rgba(0, 31, 63, 0.03) 1px, transparent 1px);
       background-size: 50px 50px;

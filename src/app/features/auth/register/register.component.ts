@@ -14,7 +14,7 @@ import { Role } from '../../../shared/models/auth.models';
       <!-- Left Side - Promo -->
       <div class="auth-left">
         <div class="promo-overlay"></div>
-        
+
         <!-- Animated particles -->
         <div class="particles">
           @for (i of [1,2,3,4,5,6,7,8,9,10,11,12]; track i) {
@@ -148,10 +148,10 @@ import { Role } from '../../../shared/models/auth.models';
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                     <circle cx="12" cy="7" r="4"></circle>
                   </svg>
-                  <input 
-                    id="name" 
-                    type="text" 
-                    formControlName="name" 
+                  <input
+                    id="name"
+                    type="text"
+                    formControlName="name"
                     placeholder="Jean Dupont"
                     [class.invalid]="registerForm.get('name')?.invalid && registerForm.get('name')?.touched"
                   >
@@ -168,10 +168,10 @@ import { Role } from '../../../shared/models/auth.models';
                     <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
                     <polyline points="22,6 12,13 2,6"></polyline>
                   </svg>
-                  <input 
-                    id="email" 
-                    type="email" 
-                    formControlName="email" 
+                  <input
+                    id="email"
+                    type="email"
+                    formControlName="email"
                     placeholder="vous@exemple.com"
                     [class.invalid]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
                   >
@@ -188,10 +188,10 @@ import { Role } from '../../../shared/models/auth.models';
                     <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                     <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                   </svg>
-                  <input 
-                    id="password" 
-                    type="password" 
-                    formControlName="password" 
+                  <input
+                    id="password"
+                    type="password"
+                    formControlName="password"
                     placeholder="Min. 6 caractères"
                     [class.invalid]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
                   >
@@ -212,10 +212,10 @@ import { Role } from '../../../shared/models/auth.models';
                   <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
                     <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
                   </svg>
-                  <input 
-                    id="contactInfo" 
-                    type="tel" 
-                    formControlName="contactInfo" 
+                  <input
+                    id="contactInfo"
+                    type="tel"
+                    formControlName="contactInfo"
                     placeholder="+33 6 12 34 56 78"
                   >
                 </div>
@@ -256,8 +256,8 @@ import { Role } from '../../../shared/models/auth.models';
               </button>
 
               <p class="terms">
-                En créant un compte, vous acceptez nos 
-                <a href="#">Conditions d'utilisation</a> et notre 
+                En créant un compte, vous acceptez nos
+                <a href="#">Conditions d'utilisation</a> et notre
                 <a href="#">Politique de confidentialité</a>
               </p>
             </form>
@@ -288,7 +288,7 @@ import { Role } from '../../../shared/models/auth.models';
             </div>
 
             <p class="switch-auth">
-              Déjà un compte ? 
+              Déjà un compte ?
               <a routerLink="/login">Se connecter</a>
             </p>
           </div>
@@ -1014,19 +1014,16 @@ export class RegisterComponent {
   });
 
   onSubmit() {
-    if (this.registerForm.invalid) return;
+    if (this.registerForm.valid) {
+      const registerData = this.registerForm.value as RegisterRequest; // <--- Add "as RegisterRequest"
 
-    this.isLoading = true;
-    this.errorMessage = '';
-
-    const registerData = { ...this.registerForm.value, role: Role.CLIENT };
-    this.authService.register(registerData).subscribe({
-      next: () => {
+      this.authService.register(registerData).subscribe({
+        next: () => {
         this.isLoading = false;
         this.successMessage = 'Compte créé avec succès ! Redirection...';
         setTimeout(() => this.router.navigate(['/login']), 1500);
       },
-      error: (err) => {
+      error: (err: any) => {
         this.isLoading = false;
         if (err.status === 409) {
           this.errorMessage = 'Cet email est déjà utilisé.';
@@ -1040,12 +1037,12 @@ export class RegisterComponent {
   getPasswordStrength(): number {
     const password = this.registerForm.get('password')?.value || '';
     let strength = 0;
-    
+
     if (password.length >= 6) strength++;
     if (password.length >= 8) strength++;
     if (/[A-Z]/.test(password) && /[a-z]/.test(password)) strength++;
     if (/[0-9]/.test(password) || /[^A-Za-z0-9]/.test(password)) strength++;
-    
+
     return strength;
   }
 

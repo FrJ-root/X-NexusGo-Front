@@ -14,10 +14,10 @@ export class ToastService {
   private counter = 0;
   readonly toasts = signal<Toast[]>([]);
 
-  private show(message: string, type: Toast['type'], duration: number = 5000): void {
+public show(message: string, type: Toast['type'], duration: number = 5000): void {
     const id = ++this.counter;
     const toast: Toast = { id, message, type, duration };
-    
+
     this.toasts.update(toasts => [...toasts, toast]);
 
     if (duration > 0) {
