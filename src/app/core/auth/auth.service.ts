@@ -19,10 +19,13 @@ export class AuthService {
   currentUserRole = signal<Role[]>(this.tokenService.getUserRoles());
 
   login(credentials: LoginRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials).pipe(
+    return this.http.post<AuthResponse>(`${this.apiUrl}/authenticate`, credentials).pipe(
       tap(response => {
+        console.log('AuthService: Login response:', response);
         this.tokenService.setTokens(response.accessToken, response.refreshToken);
-        this.currentUserRole.set(this.tokenService.getUserRoles());
+        const roles = this.tokenService.getUserRoles();
+        this.currentUserRole.set(roles);
+        console.log('AuthService: User roles after login:', roles);
       })
     );
   }
@@ -42,13 +45,13 @@ export class AuthService {
   }
 
   getUserRole(): Role[] {
-    return this.tokenService.getUserRoles();
+    return this.currentUserRole();
   }
 
   refreshToken(): Observable<AuthResponse> {
-     const refreshToken = this.tokenService.getRefreshToken();
-     return this.http.post<AuthResponse>(`${this.apiUrl}/refresh-token`, { refreshToken }).pipe(
-        tap(response => this.tokenService.setTokens(response.accessToken, response.refreshToken))
-     );
+    const refreshToken = this.tokenService.getRefreshToken();
+    return this.http.post<AuthResponse>(`${this.apiUrl}/refresh-token`, { refreshToken }).pipe(
+      tap(response => this.tokenService.setTokens(response.accessToken, response.refreshToken))
+    );
   }
 }

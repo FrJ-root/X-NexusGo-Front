@@ -19,7 +19,7 @@ export class SalesOrderService {
 
     if (status) params = params.set('status', status);
 
-    return this.http.get<any>(this.apiUrl, { params });
+    return this.http.get<any>(`${this.apiUrl}/my-orders`, { params });
   }
 
   // Create a new order
@@ -30,5 +30,24 @@ export class SalesOrderService {
   // Get Order Details
   getOrderById(id: number): Observable<SalesOrder> {
     return this.http.get<SalesOrder>(`${this.apiUrl}/${id}`);
+  }
+
+  // Reserve order stock
+  reserve(id: number): Observable<SalesOrder> {
+    return this.http.post<SalesOrder>(`${this.apiUrl}/${id}/reserve`, {});
+  }
+
+  // Cancel order
+  cancel(id: number): Observable<SalesOrder> {
+    return this.http.post<SalesOrder>(`${this.apiUrl}/${id}/cancel`, {});
+  }
+
+  // Admin/WH: Get all orders
+  getAllOrders(page: number = 0, size: number = 10, status?: OrderStatus): Observable<any> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+    if (status) params = params.set('status', status);
+    return this.http.get<any>(this.apiUrl, { params });
   }
 }

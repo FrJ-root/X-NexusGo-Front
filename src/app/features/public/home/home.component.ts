@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
 import { AuthService } from '../../../core/auth/auth.service';
 import { Role } from '../../../shared/models/auth.models';
-import { Role } from '../../../shared/models/auth.models';
 
 interface Feature {
   icon: string;
@@ -1916,19 +1915,15 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   goToDashboard() {
-    const role = this.authService.getUserRole();
-    switch (role) {
-      case Role.ADMIN:
-        this.router.navigate(['/admin']);
-        break;
-      case Role.WAREHOUSE_MANAGER:
-        this.router.navigate(['/warehouse']);
-        break;
-      case Role.CLIENT:
-        this.router.navigate(['/client']);
-        break;
-      default:
-        this.router.navigate(['/login']);
+    const roles = this.authService.getUserRole();
+    if (roles.includes(Role.ADMIN)) {
+      this.router.navigate(['/admin']);
+    } else if (roles.includes(Role.WAREHOUSE_MANAGER)) {
+      this.router.navigate(['/warehouse']);
+    } else if (roles.includes(Role.CLIENT)) {
+      this.router.navigate(['/client']);
+    } else {
+      this.router.navigate(['/login']);
     }
   }
 

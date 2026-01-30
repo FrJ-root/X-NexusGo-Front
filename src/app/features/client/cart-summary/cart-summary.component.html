@@ -1,0 +1,115 @@
+<div class="page-container">
+    <!-- Header -->
+    <div class="page-header">
+        <div>
+            <h1>🛒 Mon Panier</h1>
+            <p class="subtitle">Finalisez votre commande</p>
+        </div>
+        <button *ngIf="cartService.cartItems().length > 0" (click)="clearCart()" class="btn-clear-cart">
+            🗑️ Vider le panier
+        </button>
+    </div>
+
+    <!-- Cart Items -->
+    <div *ngIf="cartService.cartItems().length > 0; else emptyCart" class="cart-content">
+        <div class="cart-items-section">
+            <h2>Articles ({{ cartService.cartCount() }})</h2>
+
+            <div class="cart-items-list">
+                <div *ngFor="let item of cartService.cartItems()" class="cart-item">
+                    <div class="item-image">
+                        <div class="image-placeholder">
+                            <span>📦</span>
+                        </div>
+                    </div>
+
+                    <div class="item-info">
+                        <h3 class="item-name">{{ item.product.name }}</h3>
+                        <div class="item-sku">SKU: {{ item.product.sku }}</div>
+                        <div class="item-price">{{ item.product.finalPrice || 0 }} € / unité</div>
+                    </div>
+
+                    <div class="item-quantity">
+                        <label>Quantité</label>
+                        <div class="quantity-controls">
+                            <button (click)="updateQuantity(item, item.quantity - 1)" class="btn-qty">
+                                -
+                            </button>
+                            <input type="number" [value]="item.quantity"
+                                (change)="updateQuantity(item, +$any($event.target).value)" min="1" class="qty-input" />
+                            <button (click)="updateQuantity(item, item.quantity + 1)" class="btn-qty">
+                                +
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="item-total">
+                        <div class="total-label">Total</div>
+                        <div class="total-value">
+                            {{ (item.quantity * (item.product.finalPrice || 0)) | number:'1.2-2'
+                            }} €
+                        </div>
+                    </div>
+
+                    <button (click)="removeItem(item)" class="btn-remove" title="Retirer du panier">
+                        ✕
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="order-summary-section">
+            <div class="summary-card">
+                <h2>Récapitulatif</h2>
+
+                <div class="summary-line">
+                    <span>Sous-total</span>
+                    <span>{{ subtotal() | number:'1.2-2' }} €</span>
+                </div>
+
+                <div class="summary-line">
+                    <span>Frais de port</span>
+                    <span>Offerts</span>
+                </div>
+
+                <div class="summary-divider"></div>
+
+                <div class="summary-total">
+                    <span>Total</span>
+                    <span>{{ total() | number:'1.2-2' }} €</span>
+                </div>
+
+                <button (click)="createOrder()" [disabled]="loading()" class="btn-checkout">
+                    <span *ngIf="!loading()">Créer la commande</span>
+                    <span *ngIf="loading()">Création en cours...</span>
+                </button>
+
+                <a routerLink="/client/products" class="btn-continue">
+                    ← Continuer mes achats
+                </a>
+            </div>
+
+            <div class="info-box">
+                <div class="info-icon">ℹ️</div>
+                <div class="info-content">
+                    <h4>Information</h4>
+                    <p>Après création, votre commande sera en statut "CRÉÉE". Vous pourrez ensuite demander une
+                        réservation de stock.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Empty Cart State -->
+    <ng-template #emptyCart>
+        <div class="empty-cart">
+            <div class="empty-icon">🛒</div>
+            <h3>Votre panier est vide</h3>
+            <p>Ajoutez des produits pour commencer votre commande</p>
+            <a routerLink="/client/products" class="btn-shop">
+                Parcourir le catalogue
+            </a>
+        </div>
+    </ng-template>
+</div>

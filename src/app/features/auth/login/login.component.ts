@@ -4,7 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/auth/auth.service';
 import { CommonModule } from '@angular/common';
 import { TokenService } from '../../../core/auth/token.service';
-import { Role } from '../../../shared/models/auth.models';
+import { Role, LoginRequest } from '../../../shared/models/auth.models';
 
 @Component({
   selector: 'app-login',
@@ -959,28 +959,29 @@ export class LoginComponent {
 
       this.authService.login(loginData).subscribe({
         next: () => {
-        const roles = this.tokenService.getUserRoles();
+          const roles = this.tokenService.getUserRoles();
 
-        console.log('Rôles détectés :', roles);
+          console.log('Rôles détectés :', roles);
 
-        if (roles.includes(Role.ADMIN)) {
-          this.router.navigate(['/admin']);
-        } else if (roles.includes(Role.WAREHOUSE_MANAGER)) {
-          this.router.navigate(['/warehouse']);
-        } else if (roles.includes(Role.CLIENT)) {
-          this.router.navigate(['/client']);
-        } else {
-          this.router.navigate(['/login']);
+          if (roles.includes(Role.ADMIN)) {
+            this.router.navigate(['/admin']);
+          } else if (roles.includes(Role.WAREHOUSE_MANAGER)) {
+            this.router.navigate(['/warehouse']);
+          } else if (roles.includes(Role.CLIENT)) {
+            this.router.navigate(['/client']);
+          } else {
+            this.router.navigate(['/login']);
+          }
+        },
+        error: (err: any) => {
+          this.isLoading = false;
+          if (err.status === 403 || err.status === 401) {
+            this.errorMessage = 'Identifiants incorrects.';
+          } else {
+            this.errorMessage = 'Erreur serveur. Réessayez plus tard.';
+          }
         }
-      },
-      error: (err: any) => {
-        this.isLoading = false;
-        if (err.status === 403 || err.status === 401) {
-          this.errorMessage = 'Identifiants incorrects.';
-        } else {
-          this.errorMessage = 'Erreur serveur. Réessayez plus tard.';
-        }
-      }
-    });
+      });
+    }
   }
 }

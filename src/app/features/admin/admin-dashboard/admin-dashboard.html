@@ -1,1 +1,67 @@
-<p>admin-dashboard works!</p>
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h1>Tableau de bord Administrateur</h1>
+        <div class="header-actions">
+            <button routerLink="/admin/users" class="btn btn-primary">Gérer Utilisateurs</button>
+            <button routerLink="/admin/products" class="btn btn-outline">Paramètres Produits</button>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        <app-stat-card label="Utilisateurs Actifs" [value]="stats().activeUsers" variant="primary" icon="👥">
+        </app-stat-card>
+
+        <app-stat-card label="Produits au Catalogue" [value]="stats().totalProducts" variant="info" icon="📦">
+        </app-stat-card>
+
+        <app-stat-card label="Commandes Globales" [value]="stats().totalOrders" variant="success" icon="📄">
+        </app-stat-card>
+
+        <app-stat-card label="CA Global" [value]="stats().revenue" variant="warning" icon="💰" [format]="'currency'">
+        </app-stat-card>
+    </div>
+
+    <div class="dashboard-content-grid">
+        <div class="card reporting-card">
+            <h3>Performance de Livraison</h3>
+            <div *ngIf="performanceStats() as ps; else loadingPS" class="performance-content">
+                <div class="perf-metric">
+                    <span class="label">Taux Respect Délais</span>
+                    <div class="progress-bar">
+                        <div class="progress" [style.width]="ps.onTimeRate + '%'"></div>
+                    </div>
+                    <span class="value">{{ ps.onTimeRate }}%</span>
+                </div>
+                <div class="perf-metric">
+                    <span class="label">Delai moyen (Jours)</span>
+                    <span class="value">{{ ps.averageLeadTime }}j</span>
+                </div>
+            </div>
+            <ng-template #loadingPS>
+                <p class="text-muted">Chargement des analyses...</p>
+            </ng-template>
+        </div>
+
+        <div class="card quick-actions">
+            <h3>Accès Rapides</h3>
+            <div class="actions-grid">
+                <a routerLink="/admin/warehouses" class="action-item">
+                    <span class="icon">🏢</span>
+                    <span class="label">Gestion Entrepôts</span>
+                </a>
+                <a routerLink="/admin/suppliers" class="action-item">
+                    <span class="icon">🚚</span>
+                    <span class="label">Gestion Fournisseurs</span>
+                </a>
+                <a routerLink="/admin/purchase-orders" class="action-item">
+                    <span class="icon">🛒</span>
+                    <span class="label">Commandes Achat</span>
+                </a>
+                <a routerLink="/admin/reporting" class="action-item">
+                    <span class="icon">📊</span>
+                    <span class="label">Rapports Complets</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

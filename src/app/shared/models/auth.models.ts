@@ -1,8 +1,6 @@
-export enum Role {
-  ADMIN = 'ADMIN',
-  WAREHOUSE_MANAGER = 'WAREHOUSE_MANAGER',
-  CLIENT = 'CLIENT'
-}
+import { Role } from './business.models';
+
+export { Role };
 
 export interface LoginRequest {
   email: string;

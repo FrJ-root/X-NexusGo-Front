@@ -1,0 +1,119 @@
+<div class="page-container">
+    <!-- Header -->
+    <div class="page-header">
+        <div>
+            <h1>📋 Mes Commandes</h1>
+            <p class="subtitle">Consultez l'historique et le statut de vos commandes</p>
+        </div>
+        <a routerLink="/client/products" class="btn btn-primary">
+            + Nouvelle Commande
+        </a>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters-section">
+        <select [value]="selectedStatus()" (change)="onStatusChange($any($event.target).value)" class="status-select">
+            <option value="">Tous les statuts</option>
+            <option *ngFor="let status of statusOptions" [value]="status">
+                {{ getStatusLabel(status) }}
+            </option>
+        </select>
+
+        <button *ngIf="selectedStatus()" (click)="clearFilter()" class="btn-clear">
+            ✕ Effacer filtre
+        </button>
+
+        <div class="spacer"></div>
+
+        <div class="results-count">
+            {{ totalElements() }} commande(s)
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading()" class="loading-state">
+        <div class="spinner"></div>
+        <p>Chargement des commandes...</p>
+    </div>
+
+    <!-- Orders List -->
+    <div *ngIf="!loading()" class="orders-list">
+        <div *ngFor="let order of orders()" class="order-card">
+            <div class="order-header">
+                <div class="order-id-section">
+                    <span class="order-label">Commande</span>
+                    <span class="order-id">#{{ order.id }}</span>
+                </div>
+                <div class="order-status" [class]="'status-' + order.status.toLowerCase()">
+                    {{ getStatusLabel(order.status) }}
+                </div>
+            </div>
+
+            <div class="order-body">
+                <div class="order-info-grid">
+                    <div class="info-item">
+                        <span class="info-icon">📅</span>
+                        <div class="info-content">
+                            <span class="info-label">Date de création</span>
+                            <span class="info-value">{{ order.createdAt | date:'medium' }}</span>
+                        </div>
+                    </div>
+
+                    <div class="info-item" *ngIf="order.reservedAt">
+                        <span class="info-icon">🔒</span>
+                        <div class="info-content">
+                            <span class="info-label">Réservée le</span>
+                            <span class="info-value">{{ order.reservedAt | date:'short' }}</span>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <span class="info-icon">💰</span>
+                        <div class="info-content">
+                            <span class="info-label">Montant total</span>
+                            <span class="info-value">{{ getTotalAmount(order) | number:'1.2-2' }} €</span>
+                        </div>
+                    </div>
+
+                    <div class="info-item" *ngIf="order.lines">
+                        <span class="info-icon">📦</span>
+                        <div class="info-content">
+                            <span class="info-label">Articles</span>
+                            <span class="info-value">{{ order.lines.length }} article(s)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="order-footer">
+                <a [routerLink]="['/client/orders', order.id]" class="btn-details">
+                    Voir détails →
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!loading() && orders().length === 0" class="empty-state">
+        <div class="empty-icon">📭</div>
+        <h3>Aucune commande trouvée</h3>
+        <p *ngIf="selectedStatus()">Aucune commande avec le statut sélectionné</p>
+        <p *ngIf="!selectedStatus()">Vous n'avez pas encore passé de commande</p>
+        <a routerLink="/client/products" class="btn btn-primary">Créer ma première commande</a>
+    </div>
+
+    <!-- Pagination -->
+    <div *ngIf="!loading() && totalPages() > 1" class="pagination">
+        <button class="btn-page" [disabled]="currentPage() === 0" (click)="previousPage()">
+            ← Précédent
+        </button>
+
+        <span class="page-info">
+            Page {{ currentPage() + 1 }} sur {{ totalPages() }}
+        </span>
+
+        <button class="btn-page" [disabled]="currentPage() >= totalPages() - 1" (click)="nextPage()">
+            Suivant →
+        </button>
+    </div>
+</div>

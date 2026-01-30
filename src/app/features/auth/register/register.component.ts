@@ -3,7 +3,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/auth/auth.service';
 import { CommonModule } from '@angular/common';
-import { Role } from '../../../shared/models/auth.models';
+import { Role, RegisterRequest } from '../../../shared/models/auth.models';
 
 @Component({
   selector: 'app-register',
@@ -1019,19 +1019,20 @@ export class RegisterComponent {
 
       this.authService.register(registerData).subscribe({
         next: () => {
-        this.isLoading = false;
-        this.successMessage = 'Compte créé avec succès ! Redirection...';
-        setTimeout(() => this.router.navigate(['/login']), 1500);
-      },
-      error: (err: any) => {
-        this.isLoading = false;
-        if (err.status === 409) {
-          this.errorMessage = 'Cet email est déjà utilisé.';
-        } else {
-          this.errorMessage = 'Erreur lors de l\'inscription. Veuillez réessayer.';
+          this.isLoading = false;
+          this.successMessage = 'Compte créé avec succès ! Redirection...';
+          setTimeout(() => this.router.navigate(['/login']), 1500);
+        },
+        error: (err: any) => {
+          this.isLoading = false;
+          if (err.status === 409) {
+            this.errorMessage = 'Cet email est déjà utilisé.';
+          } else {
+            this.errorMessage = 'Erreur lors de l\'inscription. Veuillez réessayer.';
+          }
         }
-      }
-    });
+      });
+    }
   }
 
   getPasswordStrength(): number {

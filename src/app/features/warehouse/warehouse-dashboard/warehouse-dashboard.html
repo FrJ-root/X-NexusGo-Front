@@ -1,1 +1,50 @@
-<p>warehouse-dashboard works!</p>
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h1>Tableau de bord Entrepôt</h1>
+        <div class="header-actions">
+            <button routerLink="/warehouse/inventory" class="btn btn-primary">Gérer Stock</button>
+            <button routerLink="/warehouse/orders" class="btn btn-outline">Commandes en attente</button>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        <app-stat-card label="Réservations en attente" [value]="stats().pendingReservations" variant="warning"
+            icon="🔒">
+        </app-stat-card>
+
+        <app-stat-card label="Expéditions du jour" [value]="stats().shipmentsToday" variant="info" icon="🚚">
+        </app-stat-card>
+
+        <app-stat-card label="Alertes Stock bas" [value]="stats().lowStockCount" variant="danger" icon="⚠️">
+        </app-stat-card>
+    </div>
+
+    <div class="dashboard-content-grid">
+        <!-- Active Warehouses -->
+        <div class="card warehouse-list">
+            <h3>Entrepôts Gérés</h3>
+            <div class="list-container">
+                <div *ngFor="let wh of warehouses()" class="list-item">
+                    <div class="item-info">
+                        <strong>{{ wh.name }}</strong> ({{ wh.code }})
+                    </div>
+                    <button [routerLink]="['/warehouse/inventory', wh.id]" class="btn-link">Inventaire →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Movements -->
+        <div class="card movements-list">
+            <h3>Derniers Mouvements</h3>
+            <div class="list-container">
+                <div *ngFor="let m of recentMovements()" class="list-item">
+                    <div class="item-date">{{ m.occurredAt | date:'shortTime' }}</div>
+                    <div class="item-desc">
+                        <span class="movement-badge" [class]="m.type.toLowerCase()">{{ m.type }}</span>
+                        Produit #{{ m.productId }} : {{ m.quantity }} units
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
